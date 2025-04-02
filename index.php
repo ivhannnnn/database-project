@@ -11,11 +11,11 @@
     <div class="container">
         <div class="wrapper">
             <div class="form-box login">
-                <form action="">
+            <form id="loginForm">
                     <h1>Login</h1>
                     <div class="input-box">
                         <i class='bx bxs-user'></i>
-                        <input type="text" placeholder="Username" required>
+                        <input type="text" id="loginUsername" placeholder="Username" required>
                     </div>
                     <div class="input-box">
                         <i class='bx bxs-lock-alt'></i>
@@ -29,20 +29,48 @@
                     <button type="submit" class="btn">Login</button>
                     <div class="register-link">
                         <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+                        
                     </div>
+
+                    
                 </form>
+                <script>
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let formData = new FormData();
+    formData.append("username", document.getElementById("loginUsername").value);
+    formData.append("password", document.getElementById("loginPassword").value);
+
+    fetch("login.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log("Server Response:", data);
+        if (data.trim() === "success") {
+            alert("Login successful!");
+            window.location.href = "dashboard.php"; // Redirect to dashboard
+        } else {
+            alert("Login failed: " + data);
+        }
+    })
+    .catch(error => console.error("Fetch Error:", error));
+});
+</script>
             </div>
 
             <div class="form-box register">
-                <form action="">
+            <form id="registerForm">
                     <h1>Register</h1>
                     <div class="input-box">
                         <i class='bx bxs-user'></i>
-                        <input type="text" placeholder="Username" required>
+                        <input type="text" id="username" placeholder="Username" required>
                     </div>
                     <div class="input-box">
                         <i class='bx bxs-envelope'></i>
-                        <input type="email" placeholder="Email Address" required>
+                        <input type="email" id="email" placeholder="Email Address" required>
                     </div>
                     <div class="input-box">
                         <i class='bx bxs-lock-alt'></i>
@@ -51,23 +79,59 @@
                     </div>
                     <div class="input-box">
                         <i class='bx bxs-phone'></i>
-                        <input type="tel" placeholder="Contact Number" required>
+                        <input type="tel" id="contact" placeholder="Contact Number" required>
                     </div>
                     <div class="input-box">
                         <i class='bx bxs-calendar'></i>
-                        <input type="date" required>
+                        <input type="date" id="birth_date" required>
                     </div>
                     <button type="submit" class="btn">Register</button>
                     <div class="register-link">
                         <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
                     </div>
                 </form>
+                <script>
+document.getElementById("registerForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let formData = new FormData();
+    formData.append("username", document.getElementById("username").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("password", document.getElementById("registerPassword").value);
+    formData.append("contact", document.getElementById("contact").value);
+    formData.append("birth_date", document.getElementById("birth_date").value);
+
+    fetch("register.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log("Server Response:", data);
+        if (data.trim() === "success") {
+            alert("Registration successful! You can now log in.");
+
+         
+            const wrapper = document.querySelector(".wrapper");
+            if (wrapper) {
+                wrapper.classList.remove("active");
+            }
+
+           
+            document.getElementById("registerForm").reset();
+        } else {
+            alert("Registration failed user name or email taken already: " + data);
+        }
+    })
+    .catch(error => console.error("Fetch Error:", error));
+});
+</script>
             </div>
         </div>
     </div>
 
     <script>
-        // Toggle password visibility
+    
         function togglePasswordVisibility(toggleId, inputId) {
             const toggle = document.getElementById(toggleId);
             const input = document.getElementById(inputId);
@@ -86,7 +150,7 @@
         togglePasswordVisibility('toggleLoginPassword', 'loginPassword');
         togglePasswordVisibility('toggleRegisterPassword', 'registerPassword');
 
-        // Flip form functionality
+     
         const wrapper = document.querySelector(".wrapper");
         const showRegister = document.getElementById("showRegister");
         const showLogin = document.getElementById("showLogin");
@@ -98,7 +162,7 @@
         showLogin.addEventListener("click", () => {
             wrapper.classList.remove("active");
         });
-    </script>
+        </script>
 
 </body>
 </html>
