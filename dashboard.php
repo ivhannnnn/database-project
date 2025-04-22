@@ -19,6 +19,7 @@ if (!isset($_SESSION['user_id'])) {
       --glass-border: rgba(255, 255, 255, 0.1);
       --nav-glass-bg: rgba(0, 0, 0, 0.2);
       --nav-hover-bg: rgba(255, 255, 255, 0.1);
+      --active-bg: rgba(255, 255, 255, 0.25);
     }
 
     * {
@@ -61,6 +62,11 @@ if (!isset($_SESSION['user_id'])) {
     .nav-top a:hover {
       background: var(--nav-hover-bg);
       transform: scale(1.05);
+    }
+
+    .nav-top a.active {
+      background: var(--active-bg);
+      box-shadow: 0 0 8px rgba(255,255,255,0.3);
     }
 
     .main-content {
@@ -122,7 +128,7 @@ if (!isset($_SESSION['user_id'])) {
 
   
   <div class="nav-top">
-    <a href="profile.php">Profile</a>
+  <a href="profile.php">Profile</a>
     <a href="explore_recipes.php">Explore Recipes</a>
     <a href="upload_recipe.php">Upload Recipes</a>
     <a href="saved_recipes.php">Saved Recipes</a>
