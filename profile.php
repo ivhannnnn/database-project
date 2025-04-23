@@ -14,6 +14,25 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+
+// Check for error message in the URL
+$error_message = '';
+if (isset($_GET['error'])) {
+    switch ($_GET['error']) {
+        case 'no_file_selected':
+            $error_message = "No file selected. Please choose a file to upload.";
+            break;
+        case 'invalid_file_type':
+            $error_message = "Invalid file type. Only jpg, jpeg, png, or gif images are allowed.";
+            break;
+        case 'upload_failed':
+            $error_message = "Failed to upload the file. Please try again.";
+            break;
+        default:
+            $error_message = '';
+            break;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,46 +46,34 @@ $user = $result->fetch_assoc();
         body {
             font-family: 'Poppins', sans-serif;
             background: url('bgp.jpg') no-repeat center center / cover;
-            color: #fff; /* Darker text for better readability on various backgrounds */
+            color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            min-height: 100vh; /* Ensure the background covers the entire viewport */
-            margin: 0; /* Reset default body margin */
-            box-sizing: border-box; /* Include padding and border in element's total width and height */
-            
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
         }
 
         .profile-container {
-            background: rgba(255, 255, 255, 0.9); /* Lighter background with transparency */
-            border-radius: 16px; /* Slightly less rounded for a modern feel */
+            background: transparent;
+            border-radius: 16px;
             padding: 40px;
-            max-width: 550px; /* Slightly wider for better content flow */
+            max-width: 550px;
             width: 100%;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1); /* More subtle and modern shadow */
-            backdrop-filter: blur(10px); /* Keep the blur effect */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
             text-align: center;
         }
 
-        .profile-container {
-    background: transparent;
-    border-radius: 16px; /* Keep your existing styles */
-    padding: 40px;
-    max-width: 550px;
-    width: 100%;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
-    text-align: center;
-}
-
         .profile-pic-container {
             position: relative;
-            width: 140px; /* Slightly larger profile picture */
+            width: 140px;
             height: 140px;
             border-radius: 50%;
             overflow: hidden;
-            margin: 0 auto 25px; /* Center the image and add more bottom spacing */
+            margin: 0 auto 25px;
             border: 4px solid #f9c74f;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
@@ -75,7 +82,7 @@ $user = $result->fetch_assoc();
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block; /* Prevent extra space below the image */
+            display: block;
         }
 
         .upload-form {
@@ -87,7 +94,6 @@ $user = $result->fetch_assoc();
             margin-bottom: 10px;
             color: #fff;
             font-weight: bold;
-            
         }
 
         .upload-form input[type="file"] {
@@ -153,12 +159,23 @@ $user = $result->fetch_assoc();
             box-shadow: 0 0 8px rgba(255,255,255,0.3);
             transform: scale(1.05);
         }
+
+        /* Error Message Styling */
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
     </style>
 </head>
 <body>
 
 <div class="profile-container">
     <h2>Your Profile</h2>
+
+    <?php if ($error_message): ?>
+        <div class="error-message"><?php echo $error_message; ?></div>
+    <?php endif; ?>
 
     <div class="profile-pic-container">
         <?php
