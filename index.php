@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flipping Login & Register Form</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
+
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
@@ -51,7 +52,7 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
         console.log("Server Response:", data);
         if (data.trim() === "success") {
             alert("Login successful!");
-            window.location.href = "dashboard.php"; // Redirect to dashboard
+            window.location.href = "dashboard.php";
         } else {
             alert("Login failed: " + data);
         }

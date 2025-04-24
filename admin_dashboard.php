@@ -1,18 +1,18 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit;
+if (!isset($_SESSION['admin'])) {
+    header("Location: admin_login.php");
+    exit();
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FoodHub Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --white: #ffffff;
@@ -31,14 +31,14 @@ if (!isset($_SESSION['user_id'])) {
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: url('bgp.jpg') no-repeat center center / cover;
+      background: url('photo.jpg') no-repeat center center / cover;
       height: 100vh;
       display: flex;
       flex-direction: column;
       color: #fff;
     }
 
-    .nav-top {
+    .navbar {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -50,7 +50,7 @@ if (!isset($_SESSION['user_id'])) {
       border-bottom: 1px solid var(--glass-border);
     }
 
-    .nav-top a {
+    .navbar a {
       color: var(--white);
       text-decoration: none;
       padding: 10px 20px;
@@ -60,12 +60,12 @@ if (!isset($_SESSION['user_id'])) {
       transition: all 0.3s ease;
     }
 
-    .nav-top a:hover {
+    .navbar a:hover {
       background: var(--nav-hover-bg);
       transform: scale(1.05);
     }
 
-    .nav-top a.active {
+    .navbar a.active {
       background: var(--active-bg);
       box-shadow: 0 0 8px rgba(255,255,255,0.3);
     }
@@ -84,7 +84,7 @@ if (!isset($_SESSION['user_id'])) {
       padding: 60px 40px;
       border-radius: 30px;
       background: var(--glass-bg);
-      backdrop-filter: blur(4px); 
+      backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       border: 1px solid var(--glass-border);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
@@ -106,7 +106,7 @@ if (!isset($_SESSION['user_id'])) {
     }
 
     @media (max-width: 600px) {
-      .nav-top {
+      .navbar {
         flex-direction: column;
         gap: 10px;
       }
@@ -127,22 +127,17 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 <body>
 
-  <div class="nav-top">
-    <a href="profile.php">Profile</a>
-    <a href="explore_recipes.php">Explore Recipes</a>
-    <a href="upload_recipe.php">Upload Recipes</a>
-    <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="notifications.php">Notifications</a> <!-- Notification word here -->
-    <a href="logout.php">Logout</a>
+  <div class="navbar">
+    <a href="admin_dashboard.php" class="active">Dashboard</a>
+    <a href="posting_approval.php">Posting Approval</a>
+    <a href="admin_logout.php">Logout</a>
   </div>
 
   <div class="main-content">
     <div class="welcome-bubble">
-      <h2>Hi, Welcome <?php echo htmlspecialchars($_SESSION['username']); ?> 👋</h2>
+      <h2>Welcome, Admin <?php echo htmlspecialchars($_SESSION['admin']); ?> 👋</h2>
       <p>
-        Welcome to <strong>FoodHub</strong> — your recipe paradise.<br>
-        Browse a variety of mouthwatering recipes,<br>
-        share your culinary creations, and get inspired by fellow food lovers!
+        Welcome to the <strong>Admin Panel</strong>. From here, you can manage user submissions, approve or reject recipes, and maintain the site effectively.
       </p>
     </div>
   </div>

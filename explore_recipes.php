@@ -7,8 +7,8 @@ if (!isset($_SESSION['user_id'])) {
 
 require 'db_connection.php';
 
-// Fetch all recipes
-$sql = "SELECT * FROM recipes ORDER BY created_at DESC";
+
+$sql = "SELECT * FROM recipes WHERE status = 'approved' ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -22,34 +22,55 @@ $result = $conn->query($sql);
         body {
             font-family: 'Poppins', sans-serif;
             background: url('bgp.jpg') no-repeat center center / cover;
-            color: #fff;
+            background-attachment: fixed;
             margin: 0;
-            padding: 40px;
+            padding: 0;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        a.back-btn {
-            display: inline-block;
-            margin-bottom: 30px;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.2);
+        .navbar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            width: 100%;
+            position: absolute;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar a {
             color: #fff;
+            text-decoration: none;
+            padding: 12px 20px;
             border-radius: 25px;
             font-weight: 600;
-            text-decoration: none;
-            transition: background 0.3s ease, transform 0.2s ease;
-            margin-top: 20px;
-            font-size: 18px;
-            text-align: center;
+            background: transparent;
+            transition: all 0.3s ease;
         }
 
-        a.back-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
+        }
+
+        .navbar a.active {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         h1 {
             text-align: center;
             font-size: 36px;
+            margin-top: 80px;
             margin-bottom: 40px;
             text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
@@ -58,13 +79,16 @@ $result = $conn->query($sql);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
+            max-width: 1200px;
+            width: 90%;
+            margin: 0 auto;
         }
 
         .card {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 18px;
             padding: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             text-decoration: none;
             color: #fff;
             transition: transform 0.25s ease, background 0.3s ease;
@@ -72,7 +96,7 @@ $result = $conn->query($sql);
 
         .card:hover {
             transform: scale(1.03);
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .card img {
@@ -103,7 +127,12 @@ $result = $conn->query($sql);
 </head>
 <body>
 
-<a href="dashboard.php" class="back-btn">← Back to Dashboard</a>
+<div class="navbar">
+    <a href="dashboard.php">Dashboard</a>
+    <a href="upload_recipe.php">Upload Recipe</a>
+    <a href="saved_recipes.php">Saved Recipes</a>
+    <a href="admin_logout.php">Logout</a>
+</div>
 
 <h1>Explore Recipes 🍴</h1>
 

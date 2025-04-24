@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['id'])) {
 $user_id = $_SESSION['user_id'];
 $recipe_id = $_GET['id'];
 
-// Prevent duplicate saves
+
 $check = $conn->prepare("SELECT * FROM saved_recipes WHERE user_id = ? AND recipe_id = ?");
 $check->bind_param("ii", $user_id, $recipe_id);
 $check->execute();

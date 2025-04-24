@@ -15,7 +15,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Check for error message in the URL
+
 $error_message = '';
 if (isset($_GET['error'])) {
     switch ($_GET['error']) {
@@ -46,6 +46,7 @@ if (isset($_GET['error'])) {
         body {
             font-family: 'Poppins', sans-serif;
             background: url('bgp.jpg') no-repeat center center / cover;
+            background-attachment: fixed;
             color: #fff;
             display: flex;
             flex-direction: column;
@@ -57,7 +58,7 @@ if (isset($_GET['error'])) {
         }
 
         .profile-container {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 16px;
             padding: 40px;
             max-width: 550px;
@@ -134,7 +135,7 @@ if (isset($_GET['error'])) {
         }
 
         .profile-info strong {
-            color:rgb(219, 199, 18);
+            color: rgb(219, 199, 18);
             font-weight: 600;
         }
 
@@ -146,7 +147,7 @@ if (isset($_GET['error'])) {
             display: inline-block;
             padding: 12px 24px;
             color: white;
-            background-color:transparent;
+            background-color: transparent;
             text-decoration: none;
             border-radius: 12px;
             font-weight: 600;
@@ -160,7 +161,7 @@ if (isset($_GET['error'])) {
             transform: scale(1.05);
         }
 
-        /* Error Message Styling */
+      
         .error-message {
             color: red;
             margin-bottom: 20px;

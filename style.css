@@ -15,8 +15,6 @@ body {
     background: url('photo.jpg') no-repeat;
     background-size: cover;
     background-position: center;
-    margin: 0;
-    padding: 0;
 }
 
 .container {
@@ -39,8 +37,6 @@ body {
     transform: rotateY(180deg);
 }
 
-
-
 .form-box {
     width: 100%;
     background: transparent;
@@ -54,6 +50,7 @@ body {
     backface-visibility: hidden;
     top: -220px;
 }
+
 .form-box h1 {
     font-size: 36px;
     text-align: center;
@@ -75,14 +72,15 @@ body {
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 40px;
     font-size: 16px;
+    font-weight: 300; 
     color: #fff;
     padding: 15px 45px 15px 40px;
 }
 
 .input-box input::placeholder {
     color: #fff;
+    font-weight: 300; 
 }
-
 
 .input-box i:first-child {
     position: absolute;
@@ -92,7 +90,6 @@ body {
     font-size: 20px;
     color: #fff;
 }
-
 
 .input-box i:last-child {
     position: absolute;
@@ -126,16 +123,36 @@ body {
 }
 
 .btn {
-    width: 100%;
-    height: 45px;
-    background: #fff;
-    border: none;
+    width: 70%; 
+    height: 50px; 
+    background: rgba(255, 255, 255, 0.2); 
+    border: 2px solid #fff; 
     outline: none;
-    border-radius: 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    cursor: pointer;
+    border-radius: 25px; 
     font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+    margin: 15px 0; 
+    text-align: center; 
 }
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.4); 
+    border-color:transparent; 
+}
+
+
+.form-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    text-align: center;
+}
+
+
 
 .register-link {
     font-size: 14.5px;
