@@ -36,6 +36,17 @@ if (!isset($_SESSION['user_id'])) {
         color: white;
         background-attachment: fixed;
     }
+    body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1; 
+        }
+
 
     .navbar {
         display: flex;
@@ -98,14 +109,23 @@ if (!isset($_SESSION['user_id'])) {
     }
 
     .form-container {
-        max-width: 600px;
-        width: 100%;
-        margin: 0 auto;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 30px;
-        border-radius: 20px;
-        text-align: center; 
-    }
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 25px 20px; 
+    border-radius: 16px;
+    text-align: center; 
+}
+
+input, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+}
 
     label {
         font-weight: 600;
@@ -123,18 +143,18 @@ if (!isset($_SESSION['user_id'])) {
     }
 
     button {
-    background-color: transparent; /* Make the button transparent */
-    border: 2px solid #fff; /* Add border for visibility */
-    color: #fff; /* Set text color to match the border */
+    background-color: transparent; 
+    border: 2px solid #fff; 
+    color: #fff; 
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 button:hover {
-    background-color: transparent; /* Add background color on hover */
-    color: white; /* Change text color to white on hover */
-    border-color: transparent; /* Change border color on hover */
+    background-color: transparent; 
+    color: white; 
+    border-color: transparent; 
 }
 
   </style>

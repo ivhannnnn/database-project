@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flipping Login & Register Form</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
     <div class="container">
         <div class="wrapper">
+          
             <div class="form-box login">
-            <form id="loginForm">
+                <form id="loginForm">
                     <h1>Login</h1>
                     <div class="input-box">
                         <i class='bx bxs-user'></i>
@@ -30,40 +31,13 @@
                     <button type="submit" class="btn">Login</button>
                     <div class="register-link">
                         <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
-                        
                     </div>
-
-                    
                 </form>
-                <script>
-document.getElementById("loginForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let formData = new FormData();
-    formData.append("username", document.getElementById("loginUsername").value);
-    formData.append("password", document.getElementById("loginPassword").value);
-
-    fetch("login.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log("Server Response:", data);
-        if (data.trim() === "success") {
-            alert("Login successful!");
-            window.location.href = "dashboard.php";
-        } else {
-            alert("Login failed: " + data);
-        }
-    })
-    .catch(error => console.error("Fetch Error:", error));
-});
-</script>
             </div>
 
+          
             <div class="form-box register">
-            <form id="registerForm">
+                <form id="registerForm">
                     <h1>Register</h1>
                     <div class="input-box">
                         <i class='bx bxs-user'></i>
@@ -91,48 +65,12 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
                         <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
                     </div>
                 </form>
-                <script>
-document.getElementById("registerForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let formData = new FormData();
-    formData.append("username", document.getElementById("username").value);
-    formData.append("email", document.getElementById("email").value);
-    formData.append("password", document.getElementById("registerPassword").value);
-    formData.append("contact", document.getElementById("contact").value);
-    formData.append("birth_date", document.getElementById("birth_date").value);
-
-    fetch("register.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log("Server Response:", data);
-        if (data.trim() === "success") {
-            alert("Registration successful! You can now log in.");
-
-         
-            const wrapper = document.querySelector(".wrapper");
-            if (wrapper) {
-                wrapper.classList.remove("active");
-            }
-
-           
-            document.getElementById("registerForm").reset();
-        } else {
-            alert("Registration failed user name or email taken already: " + data);
-        }
-    })
-    .catch(error => console.error("Fetch Error:", error));
-});
-</script>
             </div>
         </div>
     </div>
 
     <script>
-    
+   
         function togglePasswordVisibility(toggleId, inputId) {
             const toggle = document.getElementById(toggleId);
             const input = document.getElementById(inputId);
@@ -163,7 +101,60 @@ document.getElementById("registerForm").addEventListener("submit", function(even
         showLogin.addEventListener("click", () => {
             wrapper.classList.remove("active");
         });
-        </script>
 
+  
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let formData = new FormData();
+            formData.append("username", document.getElementById("loginUsername").value);
+            formData.append("password", document.getElementById("loginPassword").value);
+
+            fetch("login.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log("Server Response:", data);
+                if (data.trim() === "success") {
+                    alert("Login successful!");
+                    window.location.href = "dashboard.php"; 
+                } else {
+                    alert("Login failed: " + data);
+                }
+            })
+            .catch(error => console.error("Fetch Error:", error));
+        });
+
+       
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let formData = new FormData();
+            formData.append("username", document.getElementById("username").value);
+            formData.append("email", document.getElementById("email").value);
+            formData.append("password", document.getElementById("registerPassword").value);
+            formData.append("contact", document.getElementById("contact").value);
+            formData.append("birth_date", document.getElementById("birth_date").value);
+
+            fetch("register.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log("Server Response:", data);
+                if (data.trim() === "success") {
+                    alert("Registration successful! You can now log in.");
+                    wrapper.classList.remove("active");
+                    document.getElementById("registerForm").reset(); 
+                } else {
+                    alert("Registration failed: " + data);
+                }
+            })
+            .catch(error => console.error("Fetch Error:", error));
+        });
+    </script>
 </body>
 </html>

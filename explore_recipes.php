@@ -8,7 +8,13 @@ if (!isset($_SESSION['user_id'])) {
 require 'db_connection.php';
 
 
-$sql = "SELECT * FROM recipes WHERE status = 'approved' ORDER BY created_at DESC";
+$searchQuery = '';
+if (isset($_GET['search'])) {
+    $searchQuery = htmlspecialchars($_GET['search']);
+}
+
+
+$sql = "SELECT * FROM recipes WHERE status = 'approved' AND (title LIKE '%$searchQuery%' OR description LIKE '%$searchQuery%') ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -31,6 +37,18 @@ $result = $conn->query($sql);
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative; 
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1; 
         }
 
         .navbar {
@@ -75,6 +93,34 @@ $result = $conn->query($sql);
             text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
 
+       
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-bar input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 25px;
+            border: 2px solid #fff;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff; 
+            transition: 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            border-color: #ff6f61;
+        }
+
+        .search-bar input::placeholder {
+            color: #fff; 
+        }
+
         .recipe-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -82,6 +128,9 @@ $result = $conn->query($sql);
             max-width: 1200px;
             width: 90%;
             margin: 0 auto;
+            height: 70vh; 
+            overflow-y: auto; 
+            padding-bottom: 20px; 
         }
 
         .card {
@@ -135,6 +184,13 @@ $result = $conn->query($sql);
 </div>
 
 <h1>Explore Recipes 🍴</h1>
+
+
+<div class="search-bar">
+    <form action="explore_recipes.php" method="get">
+        <input type="text" name="search" value="<?php echo $searchQuery; ?>" placeholder="Search recipes..." />
+    </form>
+</div>
 
 <div class="recipe-container">
     <?php if ($result && $result->num_rows > 0): ?>

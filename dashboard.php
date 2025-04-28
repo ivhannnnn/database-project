@@ -36,6 +36,19 @@ if (!isset($_SESSION['user_id'])) {
       display: flex;
       flex-direction: column;
       color: #fff;
+      position: relative;
+    }
+
+   
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); 
+      z-index: -1;
     }
 
     .nav-top {
@@ -132,7 +145,7 @@ if (!isset($_SESSION['user_id'])) {
     <a href="explore_recipes.php">Explore Recipes</a>
     <a href="upload_recipe.php">Upload Recipes</a>
     <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="notifications.php">Notifications</a> <!-- Notification word here -->
+    <a href="notifications.php">Notifications</a> 
     <a href="logout.php">Logout</a>
   </div>
 

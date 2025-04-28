@@ -15,7 +15,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-
 $error_message = '';
 if (isset($_GET['error'])) {
     switch ($_GET['error']) {
@@ -55,6 +54,17 @@ if (isset($_GET['error'])) {
             min-height: 100vh;
             margin: 0;
             box-sizing: border-box;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1; 
         }
 
         .profile-container {
@@ -143,7 +153,8 @@ if (isset($_GET['error'])) {
             margin-bottom: 10px;
         }
 
-        .back-btn {
+        .back-btn,
+        .see-recipes-btn {
             display: inline-block;
             padding: 12px 24px;
             color: white;
@@ -153,15 +164,16 @@ if (isset($_GET['error'])) {
             font-weight: 600;
             transition: background-color 0.3s ease;
             font-size: 1em;
+            margin-top: 15px;
         }
 
-        .back-btn:hover {
+        .back-btn:hover,
+        .see-recipes-btn:hover {
             background: var(--active-bg);
             box-shadow: 0 0 8px rgba(255,255,255,0.3);
             transform: scale(1.05);
         }
 
-      
         .error-message {
             color: red;
             margin-bottom: 20px;
@@ -199,6 +211,9 @@ if (isset($_GET['error'])) {
         <p><strong>Contact:</strong> <?php echo htmlspecialchars($user['contact_number']); ?></p>
         <p><strong>Birth Date:</strong> <?php echo htmlspecialchars($user['birth_date']); ?></p>
     </div>
+
+
+    <a href="posted_recipes.php" class="see-recipes-btn">See All Posted Recipes</a>
 
     <a href="dashboard.php" class="back-btn">Back to Dashboard</a>
 </div>

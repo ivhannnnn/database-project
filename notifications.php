@@ -1,33 +1,17 @@
 <?php
 session_start();
-
+require 'db_connection.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-require 'db_connection.php';
-
-
 $user_id = $_SESSION['user_id'];
 
 
-if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
-
-    $dismiss_sql = "UPDATE recipes SET notification_dismissed = 1 WHERE id = ? AND user_id = ?";
-    $dismiss_stmt = $conn->prepare($dismiss_sql);
-    $dismiss_stmt->bind_param("ii", $delete_id, $user_id);
-    $dismiss_stmt->execute();
-
-    header("Location: notifications.php");
-    exit();
-}
-
-
-$sql = "SELECT id, title, approval_status, created_at FROM recipes 
-        WHERE user_id = ? AND notification_dismissed = 0 
+$sql = "SELECT id, message, type, created_at FROM notifications 
+        WHERE user_id = ? AND dismissed = 0 
         ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -65,6 +49,16 @@ $result = $stmt->get_result();
             flex-direction: column;
             color: #fff;
         }
+        body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); 
+      z-index: -1;
+    }
 
         .nav-top {
             display: flex;
@@ -115,7 +109,8 @@ $result = $stmt->get_result();
             backdrop-filter: blur(4px);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
             margin-top: 20px;
-        }
+            max-height: 500px; 
+            overflow-y: auto; 
 
         .content h2 {
             font-size: 32px;
@@ -156,7 +151,7 @@ $result = $stmt->get_result();
             margin-top: 10px;
         }
 
-        .status-pending {
+        .status-review {
             background-color: #ffc107;
             color: white;
             padding: 10px;
@@ -213,27 +208,27 @@ $result = $stmt->get_result();
 
 <div class="main-content">
     <div class="content">
-        <h2>Your Recipe Approval Status</h2>
+        <h2>Your Recipe Notifications</h2>
 
         <?php if ($result && $result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="notification-card">
-                    <h3><?php echo htmlspecialchars($row['title']); ?></h3>
-                    <p><strong>Submission Date:</strong> <?php echo htmlspecialchars($row['created_at']); ?></p>
+                    <h3><?php echo htmlspecialchars($row['message']); ?></h3>
+                    <p><strong>Received on:</strong> <?php echo htmlspecialchars($row['created_at']); ?></p>
 
-                    <?php if ($row['approval_status'] == 'approved'): ?>
-                        <div class="status-approved">Your recipe has been approved!</div>
-                    <?php elseif ($row['approval_status'] == 'rejected'): ?>
-                        <div class="status-rejected">Your recipe has been rejected.</div>
-                    <?php else: ?>
-                        <div class="status-pending">Your recipe is still under review.</div>
+                    <?php if ($row['type'] == 'approval'): ?>
+                        <div class="status-approved">Your recipe has been approved by the admin!</div>
+                    <?php elseif ($row['type'] == 'rejected'): ?>
+                        <div class="status-rejected">Your recipe has been rejected by the admin.</div>
+                    <?php elseif ($row['type'] == 'review'): ?>
+                        <div class="status-review">You have a new review on your recipe!</div>
                     <?php endif; ?>
 
                     <a href="notifications.php?delete_id=<?php echo $row['id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this notification?')">Delete Notification</a>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
-            <p>You have no recipes or pending approvals.</p>
+            <p>No new notifications.</p>
         <?php endif; ?>
     </div>
 </div>
