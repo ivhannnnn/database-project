@@ -1,9 +1,22 @@
 <?php
 session_start();
+require 'db_connection.php';
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
 }
+
+$user_id = $_SESSION['user_id'];
+
+
+$count_sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE user_id = ? AND dismissed = 0";
+$count_stmt = $conn->prepare($count_sql);
+$count_stmt->bind_param("i", $user_id);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$count_row = $count_result->fetch_assoc();
+$unread_count = $count_row['unread_count'];
 ?>
 
 <!DOCTYPE html>
@@ -37,9 +50,13 @@ if (!isset($_SESSION['user_id'])) {
       flex-direction: column;
       color: #fff;
       position: relative;
+      transition: opacity 0.5s ease-in-out;
     }
 
-   
+    body.fade-out {
+      opacity: 0;
+    }
+
     body::before {
       content: "";
       position: absolute;
@@ -47,7 +64,7 @@ if (!isset($_SESSION['user_id'])) {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5); 
+      background: rgba(0, 0, 0, 0.5);
       z-index: -1;
     }
 
@@ -97,7 +114,7 @@ if (!isset($_SESSION['user_id'])) {
       padding: 60px 40px;
       border-radius: 30px;
       background: var(--glass-bg);
-      backdrop-filter: blur(4px); 
+      backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       border: 1px solid var(--glass-border);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
@@ -109,6 +126,16 @@ if (!isset($_SESSION['user_id'])) {
       margin-bottom: 20px;
       color: #ffffff;
       text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+    }
+
+    .notif-badge {
+      background: red;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 8px;
+      font-weight: 600;
     }
 
     .welcome-bubble p {
@@ -144,8 +171,13 @@ if (!isset($_SESSION['user_id'])) {
     <a href="profile.php">Profile</a>
     <a href="explore_recipes.php">Explore Recipes</a>
     <a href="upload_recipe.php">Upload Recipes</a>
+    <a href="customer_service_form.php">Customer Service</a>
     <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="notifications.php">Notifications</a> 
+    <a href="notifications.php">Notifications
+      <?php if ($unread_count > 0): ?>
+        <span class="notif-badge"><?php echo $unread_count; ?></span>
+      <?php endif; ?>
+    </a>
     <a href="logout.php">Logout</a>
   </div>
 
@@ -159,6 +191,23 @@ if (!isset($_SESSION['user_id'])) {
       </p>
     </div>
   </div>
+
+  <script>
+    document.querySelectorAll('.nav-top a').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault(); 
+        const targetUrl = this.getAttribute('href'); 
+
+  
+        document.body.classList.add('fade-out');
+
+       
+        setTimeout(function() {
+          window.location.href = targetUrl;
+        }, 500); 
+      });
+    });
+  </script>
 
 </body>
 </html>

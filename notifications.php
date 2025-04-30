@@ -10,13 +10,59 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 
-$sql = "SELECT id, message, type, created_at FROM notifications 
-        WHERE user_id = ? AND dismissed = 0 
+if (isset($_GET['mark_as_read_id'])) {
+    $mark_as_read_id = intval($_GET['mark_as_read_id']);
+    $update_sql = "UPDATE notifications SET dismissed = 1 WHERE id = ? AND user_id = ?";
+    $update_stmt = $conn->prepare($update_sql);
+    $update_stmt->bind_param("ii", $mark_as_read_id, $user_id);
+    $update_stmt->execute();
+    header("Location: notifications.php");
+    exit();
+}
+
+
+if (isset($_GET['mark_as_unread_id'])) {
+    $mark_as_unread_id = intval($_GET['mark_as_unread_id']);
+    $update_sql = "UPDATE notifications SET dismissed = 0 WHERE id = ? AND user_id = ?";
+    $update_stmt = $conn->prepare($update_sql);
+    $update_stmt->bind_param("ii", $mark_as_unread_id, $user_id);
+    $update_stmt->execute();
+    header("Location: notifications.php");
+    exit();
+}
+
+
+if (isset($_GET['delete_id'])) {
+    $delete_id = intval($_GET['delete_id']);
+    $delete_sql = "DELETE FROM notifications WHERE id = ? AND user_id = ?";
+    $delete_stmt = $conn->prepare($delete_sql);
+    $delete_stmt->bind_param("ii", $delete_id, $user_id);
+    $delete_stmt->execute();
+    header("Location: notifications.php");
+    exit();
+}
+
+
+if (isset($_GET['delete_all'])) {
+    $delete_all_sql = "DELETE FROM notifications WHERE user_id = ?";
+    $delete_all_stmt = $conn->prepare($delete_all_sql);
+    $delete_all_stmt->bind_param("i", $user_id);
+    $delete_all_stmt->execute();
+    header("Location: notifications.php");
+    exit();
+}
+
+
+$sql = "SELECT id, message, type, created_at, dismissed FROM notifications 
+        WHERE user_id = ? 
         ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
+
+$has_notifications = ($result && $result->num_rows > 0);
 ?>
 
 <!DOCTYPE html>
@@ -26,6 +72,7 @@ $result = $stmt->get_result();
     <title>Your Recipe Notifications</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+      
         :root {
             --white: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0);
@@ -49,16 +96,17 @@ $result = $stmt->get_result();
             flex-direction: column;
             color: #fff;
         }
+
         body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5); 
-      z-index: -1;
-    }
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
 
         .nav-top {
             display: flex;
@@ -109,8 +157,9 @@ $result = $stmt->get_result();
             backdrop-filter: blur(4px);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
             margin-top: 20px;
-            max-height: 500px; 
-            overflow-y: auto; 
+            max-height: 500px;
+            overflow-y: auto;
+        }
 
         .content h2 {
             font-size: 32px;
@@ -159,20 +208,45 @@ $result = $stmt->get_result();
             margin-top: 10px;
         }
 
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
+        .action-btns {
+            display: flex;
+            gap: 10px;
             margin-top: 10px;
-            display: inline-block;
-            text-decoration: none;
         }
 
-        .delete-btn:hover {
-            background-color: #c82333;
+        .action-btns a {
+            padding: 6px 12px;
+            background-color: #008CBA;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btns a:hover {
+            background-color: #005f73;
+            transform: scale(1.05);
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-all-btn {
+            background-color: transparent;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .delete-all-btn:hover {
+            background: var(--nav-hover-bg);
+            transform: scale(1.05);
         }
 
         @media (max-width: 600px) {
@@ -210,7 +284,7 @@ $result = $stmt->get_result();
     <div class="content">
         <h2>Your Recipe Notifications</h2>
 
-        <?php if ($result && $result->num_rows > 0): ?>
+        <?php if ($has_notifications): ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="notification-card">
                     <h3><?php echo htmlspecialchars($row['message']); ?></h3>
@@ -224,12 +298,20 @@ $result = $stmt->get_result();
                         <div class="status-review">You have a new review on your recipe!</div>
                     <?php endif; ?>
 
-                    <a href="notifications.php?delete_id=<?php echo $row['id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this notification?')">Delete Notification</a>
+                    <div class="action-btns">
+                        <?php if ($row['dismissed'] == 0): ?>
+                            <a href="notifications.php?mark_as_read_id=<?php echo $row['id']; ?>">Mark as Read</a>
+                            <a href="notifications.php?mark_as_unread_id=<?php echo $row['id']; ?>">Mark as Unread</a>
+                        <?php endif; ?>
+                        <a href="notifications.php?delete_id=<?php echo $row['id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this notification?')">Delete</a>
+                    </div>
                 </div>
             <?php endwhile; ?>
+            <a href="notifications.php?delete_all=true" class="delete-all-btn" onclick="return confirm('Are you sure you want to delete all notifications?')">Delete All Notifications</a>
         <?php else: ?>
             <p>No new notifications.</p>
         <?php endif; ?>
+
     </div>
 </div>
 

@@ -4,13 +4,21 @@ if (!isset($_SESSION['admin'])) {
     header("Location: admin_login.php");
     exit();
 }
+
+
+require 'db_connection.php';
+
+
+$query = "SELECT * FROM customer_service_conversations ORDER BY created_at DESC";
+$result = $conn->query($query);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <title>User Feedback - Admin Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -36,23 +44,18 @@ if (!isset($_SESSION['admin'])) {
       display: flex;
       flex-direction: column;
       color: #fff;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    body.fade-out {
-      opacity: 0;
     }
 
     body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: -1; 
-        }
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
 
     .navbar {
       display: flex;
@@ -94,10 +97,10 @@ if (!isset($_SESSION['admin'])) {
       padding: 40px 20px;
     }
 
-    .welcome-bubble {
+    .feedback-container {
       max-width: 950px;
       width: 90%;
-      padding: 60px 40px;
+      padding: 40px 20px;
       border-radius: 30px;
       background: var(--glass-bg);
       backdrop-filter: blur(4px);
@@ -107,36 +110,52 @@ if (!isset($_SESSION['admin'])) {
       text-align: center;
     }
 
-    .welcome-bubble h2 {
+    .feedback-container h2 {
       font-size: 34px;
       margin-bottom: 20px;
       color: #ffffff;
       text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
     }
 
-    .welcome-bubble p {
-      font-size: 18px;
-      line-height: 1.8;
-      color: #f2f2f2;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+    .feedback-container table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    .feedback-container table, th, td {
+      border: 1px solid var(--glass-border);
+    }
+
+    .feedback-container th, td {
+      padding: 12px;
+      text-align: left;
+      color: #fff;
+    }
+
+    .feedback-container th {
+      background-color: var(--nav-glass-bg);
+    }
+
+    .feedback-container tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .feedback-container tr:hover {
+      background-color: rgba(255, 255, 255, 0.2);
     }
 
     @media (max-width: 600px) {
-      .navbar {
-        flex-direction: column;
-        gap: 10px;
+      .feedback-container {
+        padding: 20px;
       }
 
-      .welcome-bubble {
-        padding: 40px 20px;
-      }
-
-      .welcome-bubble h2 {
+      .feedback-container h2 {
         font-size: 24px;
       }
 
-      .welcome-bubble p {
-        font-size: 16px;
+      .feedback-container table {
+        font-size: 14px;
       }
     }
   </style>
@@ -144,37 +163,41 @@ if (!isset($_SESSION['admin'])) {
 <body>
 
   <div class="navbar">
-    <a href="admin_dashboard.php" class="active">Dashboard</a>
+    <a href="admin_dashboard.php">Dashboard</a>
     <a href="posting_approval.php">Posting Approval</a>
     <a href="users.php">Users</a>
-    <a href="user_feedback.php">User Feedback</a>
+    
     <a href="admin_logout.php">Logout</a>
   </div>
 
   <div class="main-content">
-    <div class="welcome-bubble">
-      <h2>Welcome, Admin <?php echo htmlspecialchars($_SESSION['admin']); ?> 👋</h2>
-      <p>
-        Welcome to the <strong>Admin Panel</strong>. From here, you can manage user submissions, approve or reject recipes, and maintain the site effectively.
-      </p>
+    <div class="feedback-container">
+      <h2>User Feedback</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php while ($row = $result->fetch_assoc()) { ?>
+            <tr>
+              <td><?php echo htmlspecialchars($row['username']); ?></td>
+              <td><?php echo htmlspecialchars($row['email']); ?></td>
+              <td><?php echo htmlspecialchars($row['subject']); ?></td>
+              <td><?php echo nl2br(htmlspecialchars($row['message'])); ?></td>
+              <td><?php echo htmlspecialchars($row['status']); ?></td>
+            </tr>
+          <?php } ?>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <script>
-    document.querySelectorAll('.navbar a').forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        const targetUrl = this.getAttribute('href'); 
-
-        document.body.classList.add('fade-out');
-
-       
-        setTimeout(function() {
-          window.location.href = targetUrl;
-        }, 500);
-      });
-    });
-  </script>
-
 </body>
 </html>
+
