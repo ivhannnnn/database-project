@@ -5,13 +5,20 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 
-
 require 'db_connection.php';
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'], $_POST['feedback_id'])) {
+    $reply = $conn->real_escape_string($_POST['reply']);
+    $feedback_id = (int)$_POST['feedback_id'];
+    
+  
+    $conn->query("UPDATE user_feedback SET reply='$reply' WHERE id=$feedback_id");
+}
 
 
 $query = "SELECT * FROM user_feedback ORDER BY created_at DESC"; 
 $result = $conn->query($query);
-
 ?>
 
 <!DOCTYPE html>
@@ -98,8 +105,8 @@ $result = $conn->query($query);
     }
 
     .feedback-container {
-      max-width: 950px;
-      width: 90%;
+      max-width: 1000px;
+      width: 95%;
       padding: 40px 20px;
       border-radius: 30px;
       background: var(--glass-bg);
@@ -131,18 +138,41 @@ $result = $conn->query($query);
       padding: 12px;
       text-align: left;
       color: #fff;
+      vertical-align: top;
     }
 
     .feedback-container th {
       background-color: var(--nav-glass-bg);
     }
 
-    .feedback-container tr:nth-child(e.feedback-container tr:nth-child(even) {
+    .feedback-container tr:nth-child(even) {
       background-color: rgba(255, 255, 255, 0.1);
     }
 
     .feedback-container tr:hover {
       background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    textarea {
+      width: 100%;
+      padding: 8px;
+      font-family: inherit;
+      border-radius: 6px;
+      resize: vertical;
+    }
+
+    button {
+      padding: 6px 12px;
+      margin-top: 5px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
     }
 
     @media (max-width: 600px) {
@@ -166,7 +196,7 @@ $result = $conn->query($query);
     <a href="admin_dashboard.php">Dashboard</a>
     <a href="posting_approval.php">Posting Approval</a>
     <a href="users.php">Users</a>
-    <a href="user_feedback.php" class="active">User  Feedback</a>
+    <a href="user_feedback.php" class="active">User Feedback</a>
     <a href="admin_logout.php">Logout</a>
   </div>
 
@@ -178,7 +208,7 @@ $result = $conn->query($query);
           <tr>
             <th>Username</th>
             <th>Email</th>
-            <th>Message</th>
+            <th>Message + Admin Reply</th>
             <th>Created At</th>
           </tr>
         </thead>
@@ -187,7 +217,18 @@ $result = $conn->query($query);
             <tr>
               <td><?php echo htmlspecialchars($row['username']); ?></td>
               <td><?php echo htmlspecialchars($row['email']); ?></td>
-              <td><?php echo nl2br(htmlspecialchars($row['message'])); ?></td>
+              <td>
+                <div><strong>User Message:</strong><br><?php echo nl2br(htmlspecialchars($row['message'])); ?></div>
+                <?php if (!empty($row['reply'])): ?>
+                  <div style="margin-top: 10px; color: lightgreen;"><strong>Admin Reply:</strong><br><?php echo nl2br(htmlspecialchars($row['reply'])); ?></div>
+                <?php else: ?>
+                  <form method="post" action="user_feedback.php" style="margin-top: 10px;">
+                    <textarea name="reply" rows="2" placeholder="Type your reply..." required></textarea>
+                    <input type="hidden" name="feedback_id" value="<?php echo $row['id']; ?>">
+                    <button type="submit">Reply</button>
+                  </form>
+                <?php endif; ?>
+              </td>
               <td><?php echo htmlspecialchars($row['created_at']); ?></td>
             </tr>
           <?php } ?>

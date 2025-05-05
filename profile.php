@@ -62,7 +62,7 @@ if (isset($_GET['error'])) {
             top: 0;
             left: 0;
             width: 100%;
-            height: 120%;
+            height: 150%;
             background: rgba(0, 0, 0, 0.5);
             z-index: -1; 
         }
@@ -107,7 +107,8 @@ if (isset($_GET['error'])) {
             font-weight: bold;
         }
 
-        .upload-form input[type="file"] {
+        .upload-form input[type="file"],
+        .upload-form input[type="password"] {
             display: block;
             margin-bottom: 15px;
             padding: 10px;
@@ -212,9 +213,22 @@ if (isset($_GET['error'])) {
         <p><strong>Birth Date:</strong> <?php echo htmlspecialchars($user['birth_date']); ?></p>
     </div>
 
+   
+    <div class="profile-info">
+        <h3 style="color: #f9c74f; text-align: center; margin-bottom: 10px;">Change Password</h3>
+
+        <form action="send_verification_code.php" method="POST" class="upload-form">
+            <label for="old_password">Old Password</label>
+            <input type="password" id="old_password" name="old_password" required>
+
+            <label for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" required>
+
+            <button type="submit">Send gmail Verification Code</button>
+        </form>
+    </div>
 
     <a href="posted_recipes.php" class="see-recipes-btn">See All Posted Recipes</a>
-
     <a href="dashboard.php" class="back-btn">Back to Dashboard</a>
 </div>
 
