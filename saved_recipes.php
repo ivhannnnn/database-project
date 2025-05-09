@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       display: flex;
       flex-direction: column;
       color: white;
+      transition: all 0.3s ease;
     }
     body::before {
       content: "";
@@ -77,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       backdrop-filter: blur(3px);
       -webkit-backdrop-filter: blur(3px);
       border-bottom: 1px solid var(--glass-border);
+      opacity: 0.8;
     }
 
     .navbar a {
@@ -105,6 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       justify-content: center;
       align-items: center;
       padding: 40px 20px;
+      opacity: 1;
+      transition: opacity 0.5s ease;
     }
 
     .content {
@@ -117,6 +121,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       -webkit-backdrop-filter: blur(4px);
       border: 1px solid var(--glass-border);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      opacity: 1;
+      transition: opacity 0.5s ease;
     }
 
     .content h1 {
@@ -201,12 +207,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
 <body>
 
   <div class="navbar">
-    <a href="dashboard.php">Dashboard</a>
-    <a href="saved_recipes.php" class="active">Saved Recipes</a>
-    <a href="logout.php">Logout</a>
+    <a href="dashboard.php" class="active" id="dashboardLink">Dashboard</a>
   </div>
 
-  <div class="main-content">
+  <div class="main-content" id="mainContent">
     <div class="content">
       <h1>Your Saved Recipes</h1>
       <div class="recipe-grid">
@@ -233,6 +237,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       </div>
     </div>
   </div>
+
+  <script>
+    document.getElementById('dashboardLink').addEventListener('click', function(event) {
+      event.preventDefault();
+      document.getElementById('mainContent').style.opacity = 0;
+
+      setTimeout(function() {
+        window.location.href = 'dashboard.php';
+      }, 500); 
+    });
+  </script>
 
 </body>
 </html>

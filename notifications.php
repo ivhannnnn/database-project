@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-
 if (isset($_GET['mark_as_read_id'])) {
     $mark_as_read_id = intval($_GET['mark_as_read_id']);
     $update_sql = "UPDATE notifications SET dismissed = 1 WHERE id = ? AND user_id = ?";
@@ -19,7 +18,6 @@ if (isset($_GET['mark_as_read_id'])) {
     header("Location: notifications.php");
     exit();
 }
-
 
 if (isset($_GET['mark_as_unread_id'])) {
     $mark_as_unread_id = intval($_GET['mark_as_unread_id']);
@@ -31,7 +29,6 @@ if (isset($_GET['mark_as_unread_id'])) {
     exit();
 }
 
-
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
     $delete_sql = "DELETE FROM notifications WHERE id = ? AND user_id = ?";
@@ -42,7 +39,6 @@ if (isset($_GET['delete_id'])) {
     exit();
 }
 
-
 if (isset($_GET['delete_all'])) {
     $delete_all_sql = "DELETE FROM notifications WHERE user_id = ?";
     $delete_all_stmt = $conn->prepare($delete_all_sql);
@@ -52,7 +48,6 @@ if (isset($_GET['delete_all'])) {
     exit();
 }
 
-
 $sql = "SELECT id, message, type, created_at, dismissed FROM notifications 
         WHERE user_id = ? 
         ORDER BY created_at DESC";
@@ -60,7 +55,6 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
 
 $has_notifications = ($result && $result->num_rows > 0);
 ?>
@@ -72,7 +66,6 @@ $has_notifications = ($result && $result->num_rows > 0);
     <title>Your Recipe Notifications</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-      
         :root {
             --white: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0);
@@ -111,8 +104,6 @@ $has_notifications = ($result && $result->num_rows > 0);
         .nav-top {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 16px;
             padding: 10px 20px;
             background: var(--nav-glass-bg);
             backdrop-filter: blur(3px);
@@ -159,6 +150,8 @@ $has_notifications = ($result && $result->num_rows > 0);
             margin-top: 20px;
             max-height: 500px;
             overflow-y: auto;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
 
         .content h2 {
@@ -272,16 +265,11 @@ $has_notifications = ($result && $result->num_rows > 0);
 <body>
 
 <div class="nav-top">
-    <a href="profile.php">Profile</a>
-    <a href="explore_recipes.php">Explore Recipes</a>
-    <a href="upload_recipe.php">Upload Recipes</a>
-    <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="notifications.php" class="active">Notifications</a>
-    <a href="logout.php">Logout</a>
+    <a href="dashboard.php" id="dashboardLink" class="active">Dashboard</a>
 </div>
 
 <div class="main-content">
-    <div class="content">
+    <div class="content" id="mainContent">
         <h2>Your Recipe Notifications</h2>
 
         <?php if ($has_notifications): ?>
@@ -314,6 +302,17 @@ $has_notifications = ($result && $result->num_rows > 0);
 
     </div>
 </div>
+
+<script>
+    document.getElementById('dashboardLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('mainContent').style.opacity = 0;
+
+        setTimeout(function() {
+            window.location.href = 'dashboard.php';
+        }, 500); 
+    });
+</script>
 
 </body>
 </html>

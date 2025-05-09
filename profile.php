@@ -180,6 +180,16 @@ if (isset($_GET['error'])) {
             margin-bottom: 20px;
             font-size: 1.1em;
         }
+
+      
+        .fade-out {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .fade-out.fade {
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
@@ -213,7 +223,6 @@ if (isset($_GET['error'])) {
         <p><strong>Birth Date:</strong> <?php echo htmlspecialchars($user['birth_date']); ?></p>
     </div>
 
-   
     <div class="profile-info">
         <h3 style="color: #f9c74f; text-align: center; margin-bottom: 10px;">Change Password</h3>
 
@@ -229,8 +238,21 @@ if (isset($_GET['error'])) {
     </div>
 
     <a href="posted_recipes.php" class="see-recipes-btn">See All Posted Recipes</a>
-    <a href="dashboard.php" class="back-btn">Back to Dashboard</a>
+    <a href="dashboard.php" class="back-btn fade-out" id="backBtn">Back to Dashboard</a>
 </div>
+
+<script>
+    
+    document.getElementById('backBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        this.classList.add('fade');
+
+     
+        setTimeout(function() {
+            window.location.href = 'dashboard.php';
+        }, 500); 
+    });
+</script>
 
 </body>
 </html>

@@ -7,12 +7,10 @@ if (!isset($_SESSION['user_id'])) {
 
 require 'db_connection.php';
 
-
 $searchQuery = '';
 if (isset($_GET['search'])) {
     $searchQuery = htmlspecialchars($_GET['search']);
 }
-
 
 $sql = "SELECT * FROM recipes WHERE status = 'approved' AND (title LIKE '%$searchQuery%' OR description LIKE '%$searchQuery%') ORDER BY created_at DESC";
 $result = $conn->query($sql);
@@ -32,12 +30,23 @@ $result = $conn->query($sql);
             margin: 0;
             padding: 0;
             color: #fff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative; 
+            overflow-y: auto; 
+            min-height: 100vh; 
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+        }
+
+        .page-container {
+            transition: all 0.5s ease;
         }
 
         body::before {
@@ -46,7 +55,7 @@ $result = $conn->query($sql);
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 130%;
             background: rgba(0, 0, 0, 0.5);
             z-index: -1; 
         }
@@ -54,8 +63,6 @@ $result = $conn->query($sql);
         .navbar {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 16px;
             padding: 10px 20px;
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(5px);
@@ -81,10 +88,6 @@ $result = $conn->query($sql);
             transform: scale(1.05);
         }
 
-        .navbar a.active {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
         h1 {
             text-align: center;
             font-size: 36px;
@@ -93,7 +96,6 @@ $result = $conn->query($sql);
             text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
 
-       
         .search-bar {
             display: flex;
             justify-content: center;
@@ -128,9 +130,7 @@ $result = $conn->query($sql);
             max-width: 1200px;
             width: 90%;
             margin: 0 auto;
-            height: 70vh; 
-            overflow-y: auto; 
-            padding-bottom: 20px; 
+            padding-bottom: 20px;
         }
 
         .card {
@@ -176,35 +176,44 @@ $result = $conn->query($sql);
 </head>
 <body>
 
-<div class="navbar">
-    <a href="dashboard.php">Dashboard</a>
-    <a href="upload_recipe.php">Upload Recipe</a>
-    <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="admin_logout.php">Logout</a>
+<div class="page-container" id="pageContainer">
+    <div class="navbar">
+        <a href="#" id="dashboardLink">Dashboard</a>
+    </div>
+
+    <h1>Explore Recipes 🍴</h1>
+
+    <div class="search-bar">
+        <form action="explore_recipes.php" method="get">
+            <input type="text" name="search" value="<?php echo $searchQuery; ?>" placeholder="Search recipes..." />
+        </form>
+    </div>
+
+    <div class="recipe-container">
+        <?php if ($result && $result->num_rows > 0): ?>
+            <?php while($row = $result->fetch_assoc()): ?>
+                <a href="recipe.php?id=<?php echo $row['id']; ?>" class="card">
+                    <img src="<?php echo !empty($row['image_path']) ? htmlspecialchars($row['image_path']) : 'https://via.placeholder.com/400x200?text=No+Image'; ?>" alt="Recipe Image">
+                    <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                    <p><?php echo substr(htmlspecialchars($row['description']), 0, 100) . '...'; ?></p>
+                </a>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <div class="no-recipes">No recipes found. Be the first to upload one!</div>
+        <?php endif; ?>
+    </div>
 </div>
 
-<h1>Explore Recipes 🍴</h1>
-
-
-<div class="search-bar">
-    <form action="explore_recipes.php" method="get">
-        <input type="text" name="search" value="<?php echo $searchQuery; ?>" placeholder="Search recipes..." />
-    </form>
-</div>
-
-<div class="recipe-container">
-    <?php if ($result && $result->num_rows > 0): ?>
-        <?php while($row = $result->fetch_assoc()): ?>
-            <a href="recipe.php?id=<?php echo $row['id']; ?>" class="card">
-                <img src="<?php echo !empty($row['image_path']) ? htmlspecialchars($row['image_path']) : 'https://via.placeholder.com/400x200?text=No+Image'; ?>" alt="Recipe Image">
-                <h3><?php echo htmlspecialchars($row['title']); ?></h3>
-                <p><?php echo substr(htmlspecialchars($row['description']), 0, 100) . '...'; ?></p>
-            </a>
-        <?php endwhile; ?>
-    <?php else: ?>
-        <div class="no-recipes">No recipes found. Be the first to upload one!</div>
-    <?php endif; ?>
-</div>
+<script>
+    document.getElementById('dashboardLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        const container = document.getElementById('pageContainer');
+        container.classList.add('fade-out');
+        setTimeout(() => {
+            window.location.href = 'dashboard.php';
+        }, 500); 
+    });
+</script>
 
 </body>
 </html>

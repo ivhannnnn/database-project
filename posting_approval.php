@@ -7,7 +7,6 @@ if (!isset($_SESSION['admin'])) {
 
 require 'db_connection.php';
 
-
 $sql = "SELECT * FROM recipes WHERE status = 'pending' ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
@@ -43,13 +42,10 @@ $result = $conn->query($sql);
             flex-direction: column;
             color: white;
         }
-       
 
         .navbar {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 16px;
             padding: 10px 20px;
             background: var(--nav-glass-bg);
             backdrop-filter: blur(3px);
@@ -83,6 +79,8 @@ $result = $conn->query($sql);
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
 
         .content {
@@ -155,7 +153,6 @@ $result = $conn->query($sql);
             background-color: #c82333;
         }
 
-     
         .notification {
             background-color: #28a745;
             color: white;
@@ -171,16 +168,13 @@ $result = $conn->query($sql);
 <body>
 
 <div class="navbar">
-    <a href="admin_dashboard.php">Dashboard</a>
-    <a href="posting_approval.php" class="active">Posting Approval</a>
-    <a href="admin_logout.php">Logout</a>
+    <a href="admin_dashboard.php" class="active" id="dashboardLink">Dashboard</a>
 </div>
 
-<div class="main-content">
+<div class="main-content" id="mainContent">
     <div class="content">
         <h2>Pending Approval Recipes</h2>
 
-      
         <?php if (isset($_SESSION['notification'])): ?>
             <div class="notification">
                 <?php echo $_SESSION['notification']; ?>
@@ -210,6 +204,20 @@ $result = $conn->query($sql);
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+    document.getElementById('dashboardLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+      
+        document.getElementById('mainContent').style.opacity = 0;
+
+     
+        setTimeout(function() {
+            window.location.href = 'admin_dashboard.php';
+        }, 500); 
+    });
+</script>
 
 </body>
 </html>

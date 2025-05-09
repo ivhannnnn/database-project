@@ -2,7 +2,6 @@
 session_start();
 require 'db_connection.php';
 
-
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
@@ -10,12 +9,10 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-
 $stmt = $conn->prepare("SELECT id, username, email, message, reply, created_at FROM user_feedback WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +27,7 @@ $result = $stmt->get_result();
             background: url('bgp.jpg') no-repeat center center / cover;
             color: #fff;
             padding: 40px;
+            margin: 0;
         }
         .reply-container {
             background: rgba(0,0,0,0.6);
@@ -52,25 +50,39 @@ $result = $stmt->get_result();
             color: lightgreen;
             margin-top: 10px;
         }
+
+       
         .back-btn {
-            background-color: #333;
+            background-color: transparent;
             color: #fff;
             padding: 10px 20px;
+            border: 1px solid #fff;
             border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 20px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
         }
         .back-btn:hover {
-            background-color: #555;
+            background-color: rgba(255, 255, 255, 0.1);
             transform: scale(1.05);
+        }
+
+      
+        .reply-container {
+            max-height: 600px; 
+            overflow-y: auto; 
+            padding-bottom: 50px; 
         }
     </style>
 </head>
 <body>
+
+
+<a href="javascript:history.back()" class="back-btn">Back</a>
 
 <div class="reply-container">
     <h2>Your Feedback & Admin Replies</h2>
@@ -93,16 +105,12 @@ $result = $stmt->get_result();
     <?php else: ?>
         <p>No feedback submitted yet.</p>
     <?php endif; ?>
-    
-    <!-- Back Button to Go to Previous Page -->
-    <a href="javascript:history.back()" class="back-btn">Back</a>
 </div>
 
 </body>
 </html>
 
 <?php
-
 $stmt->close();
 $conn->close();
 ?>

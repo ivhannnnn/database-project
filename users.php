@@ -7,7 +7,6 @@ if (!isset($_SESSION['admin'])) {
 
 require 'db_connection.php';
 
-
 $sql = "SELECT id, username, email FROM users";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
@@ -94,6 +93,8 @@ $result = $stmt->get_result();
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
 
         .content {
@@ -181,13 +182,10 @@ $result = $stmt->get_result();
 <body>
 
 <div class="navbar">
-    <a href="admin_dashboard.php">Dashboard</a>
-    <a href="posting_approval.php">Posting Approval</a>
-    <a href="users.php" class="active">Manage Users</a>
-    <a href="admin_logout.php">Logout</a>
+    <a href="admin_dashboard.php" class="active">Dashboard</a> 
 </div>
 
-<div class="main-content">
+<div class="main-content" id="mainContent">
     <div class="content">
         <h2>All Registered Users</h2>
 
@@ -219,6 +217,26 @@ $result = $stmt->get_result();
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+ 
+    const links = document.querySelectorAll('.navbar a');
+
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetUrl = this.href;
+
+           
+            document.getElementById('mainContent').style.opacity = 0;
+
+
+            setTimeout(function() {
+                window.location.href = targetUrl;
+            }, 500); 
+        });
+    });
+</script>
 
 </body>
 </html>

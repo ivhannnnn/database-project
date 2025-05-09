@@ -29,10 +29,9 @@ $unread_count = $count_row['unread_count'];
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Customer Service Form</title>
+    <title>Customer Service Form - FoodHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-
         :root {
             --white: #ffffff;
             --glass-bg: rgba(255, 255, 255, 0);
@@ -50,6 +49,7 @@ $unread_count = $count_row['unread_count'];
             flex-direction: column;
             color: #fff;
             position: relative;
+            overflow: hidden;
         }
         body::before {
             content: "";
@@ -59,17 +59,19 @@ $unread_count = $count_row['unread_count'];
             background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
-        .nav-top {
+        .navbar {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 16px;
             padding: 10px 20px;
             background: var(--nav-glass-bg);
             backdrop-filter: blur(3px);
             border-bottom: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
         }
-        .nav-top a {
+        .navbar a {
             color: var(--white);
             text-decoration: none;
             padding: 10px 20px;
@@ -78,7 +80,7 @@ $unread_count = $count_row['unread_count'];
             background: transparent;
             transition: all 0.3s ease;
         }
-        .nav-top a:hover {
+        .navbar a:hover {
             background: var(--nav-hover-bg);
             transform: scale(1.05);
         }
@@ -96,6 +98,7 @@ $unread_count = $count_row['unread_count'];
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
+            padding-top: 80px;
         }
         .form-container {
             max-width: 600px;
@@ -107,6 +110,7 @@ $unread_count = $count_row['unread_count'];
             border: 1px solid var(--glass-border);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
             text-align: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
         .form-container h2 {
             font-size: 34px;
@@ -148,6 +152,21 @@ $unread_count = $count_row['unread_count'];
             box-shadow: 0 0 8px rgba(255,255,255,0.3);
             transform: scale(1.05);
         }
+
+     
+        .alert {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            display: none;
+        }
+        .alert.error {
+            background-color: #f44336;
+        }
+
         @media (max-width: 600px) {
             .form-container {
                 padding: 20px;
@@ -167,28 +186,25 @@ $unread_count = $count_row['unread_count'];
 </head>
 <body>
 
-<div class="nav-top">
-    <a href="profile.php">Profile</a>
-    <a href="explore_recipes.php">Explore Recipes</a>
-    <a href="upload_recipe.php">Upload Recipes</a>
-    <a href="customer_service_form.php" class="active">Customer Service</a>
-    <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="notifications.php">Notifications
-        <?php if ($unread_count > 0): ?>
-            <span class="notif-badge"><?= $unread_count; ?></span>
-        <?php endif; ?>
-    </a>
-    <a href="logout.php">Logout</a>
+
+<div class="navbar">
+    <a href="dashboard.php" id="dashboardLink">Dashboard</a>
 </div>
 
 <div class="main-content">
-    <div class="form-container">
+    <div class="form-container" id="formContainer">
         <h2>Customer Service Form</h2>
-        <form action="submit_service_request.php" method="POST">
 
+        <?php if (isset($_SESSION['service_request_status'])): ?>
+            <div class="alert <?php echo strpos($_SESSION['service_request_status'], 'success') !== false ? '' : 'error'; ?>" style="display: block;">
+                <?php echo $_SESSION['service_request_status']; ?>
+            </div>
+            <?php unset($_SESSION['service_request_status']); ?>
+        <?php endif; ?>
+
+        <form action="submit_service_request.php" method="POST">
             <input type="text" value="<?= htmlspecialchars($user['username']) ?>" disabled>
             <input type="email" value="<?= htmlspecialchars($user['email']) ?>" disabled>
-
 
             <input type="hidden" name="username" value="<?= htmlspecialchars($user['username']) ?>">
             <input type="hidden" name="email" value="<?= htmlspecialchars($user['email']) ?>">
@@ -200,6 +216,19 @@ $unread_count = $count_row['unread_count'];
         <button onclick="window.location.href='admin_reply.php'" style="margin-top: 20px;">Admin Reply</button>
     </div>
 </div>
+
+<script>
+ 
+    document.getElementById('dashboardLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        const formContainer = document.getElementById('formContainer');
+        formContainer.style.opacity = '0';
+        formContainer.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            window.location.href = 'dashboard.php';
+        }, 500); 
+    });
+</script>
 
 </body>
 </html>

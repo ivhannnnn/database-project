@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-
 $count_sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE user_id = ? AND dismissed = 0";
 $count_stmt = $conn->prepare($count_sql);
 $count_stmt->bind_param("i", $user_id);
@@ -78,6 +77,7 @@ $unread_count = $count_row['unread_count'];
       backdrop-filter: blur(3px);
       -webkit-backdrop-filter: blur(3px);
       border-bottom: 1px solid var(--glass-border);
+      position: relative;
     }
 
     .nav-top a {
@@ -88,6 +88,8 @@ $unread_count = $count_row['unread_count'];
       font-weight: 600;
       background: transparent;
       transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
     }
 
     .nav-top a:hover {
@@ -95,9 +97,13 @@ $unread_count = $count_row['unread_count'];
       transform: scale(1.05);
     }
 
-    .nav-top a.active {
+    .nav-top .active-indicator {
+      position: absolute;
+      height: 70%;
+      border-radius: 12px;
       background: var(--active-bg);
-      box-shadow: 0 0 8px rgba(255,255,255,0.3);
+      transition: all 0.4s ease;
+      z-index: 0;
     }
 
     .main-content {
@@ -149,6 +155,7 @@ $unread_count = $count_row['unread_count'];
       .nav-top {
         flex-direction: column;
         gap: 10px;
+        position: relative;
       }
 
       .welcome-bubble {
@@ -167,7 +174,8 @@ $unread_count = $count_row['unread_count'];
 </head>
 <body>
 
-  <div class="nav-top">
+  <div class="nav-top" id="nav">
+    <div class="active-indicator" id="activeIndicator"></div>
     <a href="profile.php">Profile</a>
     <a href="explore_recipes.php">Explore Recipes</a>
     <a href="upload_recipe.php">Upload Recipes</a>
@@ -193,19 +201,33 @@ $unread_count = $count_row['unread_count'];
   </div>
 
   <script>
-    document.querySelectorAll('.nav-top a').forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        const targetUrl = this.getAttribute('href'); 
+    const links = document.querySelectorAll('.nav-top a');
+    const indicator = document.getElementById('activeIndicator');
 
-  
+    function moveIndicator(element) {
+      const rect = element.getBoundingClientRect();
+      const parentRect = element.parentElement.getBoundingClientRect();
+      indicator.style.width = rect.width + 'px';
+      indicator.style.left = (rect.left - parentRect.left) + 'px';
+    }
+
+    links.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        moveIndicator(this);
+
         document.body.classList.add('fade-out');
 
-       
-        setTimeout(function() {
+        const targetUrl = this.getAttribute('href');
+        setTimeout(() => {
           window.location.href = targetUrl;
-        }, 500); 
+        }, 500);
       });
+    });
+
+ 
+    window.addEventListener('load', () => {
+      moveIndicator(links[0]);
     });
   </script>
 

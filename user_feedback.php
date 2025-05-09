@@ -33,6 +33,7 @@ $result = $conn->query($query);
       --nav-glass-bg: rgba(0, 0, 0, 0.2);
       --nav-hover-bg: rgba(255, 255, 255, 0.1);
       --active-bg: rgba(255, 255, 255, 0.25);
+      --transition-speed: 0.3s;
     }
 
     * {
@@ -48,6 +49,17 @@ $result = $conn->query($query);
       display: flex;
       flex-direction: column;
       color: #fff;
+      transition: background 0.5s ease;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    body.fade-out {
+      opacity: 0;
+    }
+
+    body.fade-in {
+      opacity: 1;
     }
 
     body::before {
@@ -64,13 +76,12 @@ $result = $conn->query($query);
     .navbar {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 16px;
       padding: 10px 20px;
       background: var(--nav-glass-bg);
       backdrop-filter: blur(3px);
       -webkit-backdrop-filter: blur(3px);
       border-bottom: 1px solid var(--glass-border);
+      transition: background 0.3s ease;
     }
 
     .navbar a {
@@ -80,7 +91,7 @@ $result = $conn->query($query);
       border-radius: 12px;
       font-weight: 600;
       background: transparent;
-      transition: all 0.3s ease;
+      transition: all var(--transition-speed) ease;
     }
 
     .navbar a:hover {
@@ -99,6 +110,7 @@ $result = $conn->query($query);
       justify-content: center;
       align-items: center;
       padding: 40px 20px;
+      transition: padding 0.5s ease;
     }
 
     .feedback-container {
@@ -113,7 +125,7 @@ $result = $conn->query($query);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
       text-align: center;
       overflow-y: auto;
-      max-height: 70vh; /* Limit the height to make the pane scrollable */
+      max-height: 70vh; 
     }
 
     .feedback-container h2 {
@@ -192,11 +204,7 @@ $result = $conn->query($query);
 <body>
 
   <div class="navbar">
-    <a href="admin_dashboard.php">Dashboard</a>
-    <a href="posting_approval.php">Posting Approval</a>
-    <a href="users.php">Users</a>
-    <a href="user_feedback.php" class="active">User Feedback</a>
-    <a href="admin_logout.php">Logout</a>
+    <a href="admin_dashboard.php" class="active" id="dashboardLink">Dashboard</a>
   </div>
 
   <div class="main-content">
@@ -235,6 +243,17 @@ $result = $conn->query($query);
       </table>
     </div>
   </div>
+
+  <script>
+    document.getElementById('dashboardLink').addEventListener('click', function(event) {
+      event.preventDefault(); 
+      document.body.classList.add('fade-out');
+      
+      setTimeout(function() {
+        window.location.href = 'admin_dashboard.php'; 
+      }, 500);
+    });
+  </script>
 
 </body>
 </html>
