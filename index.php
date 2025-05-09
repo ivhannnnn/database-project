@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flipping Login & Register Form</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=5">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
   <div class="container">
     <div class="wrapper">
-      
-     
       <div class="form-box login">
         <form id="loginForm">
           <h1>Login</h1>
@@ -35,7 +33,6 @@
         </form>
       </div>
 
-    
       <div class="form-box register">
         <form id="registerForm">
           <h1>Register</h1>
@@ -67,7 +64,6 @@
         </form>
       </div>
 
-     
       <div class="form-box forgot-password" style="display: none;">
         <form id="forgotPasswordForm">
           <h1>Reset Password</h1>
@@ -86,7 +82,6 @@
   </div>
 
   <script>
-   
     function togglePasswordVisibility(toggleId, inputId) {
       const toggle = document.getElementById(toggleId);
       const input = document.getElementById(inputId);
@@ -107,31 +102,41 @@
 
     const wrapper = document.querySelector(".wrapper");
     document.getElementById("showRegister").addEventListener("click", () => {
-      wrapper.classList.add("active");
-      document.querySelector(".login").style.display = "none";
-      document.querySelector(".register").style.display = "block";
-      document.querySelector(".forgot-password").style.display = "none";
-    });
+  wrapper.classList.add("active");
+  document.querySelector(".login").style.visibility = "hidden"; // Hide login form
+  document.querySelector(".login").style.opacity = "0"; // Hide login form
+  document.querySelector(".register").style.visibility = "visible"; // Show register form
+  document.querySelector(".register").style.opacity = "1"; // Show register form
+  document.querySelector(".forgot-password").style.visibility = "hidden"; // Hide forgot password form
+  document.querySelector(".forgot-password").style.opacity = "0"; // Hide forgot password form
+});
 
-    document.getElementById("showLogin").addEventListener("click", () => {
-      wrapper.classList.remove("active");
-      document.querySelector(".login").style.display = "block";
-      document.querySelector(".register").style.display = "none";
-      document.querySelector(".forgot-password").style.display = "none";
-    });
+document.getElementById("showLogin").addEventListener("click", () => {
+  wrapper.classList.remove("active");
+  document.querySelector(".login").style.visibility = "visible"; // Show login form
+  document.querySelector(".login").style.opacity = "1"; // Show login form
+  document.querySelector(".register").style.visibility = "hidden"; // Hide register form
+  document.querySelector(".register").style.opacity = "0"; // Hide register form
+  document.querySelector(".forgot-password").style.visibility = "hidden"; // Hide forgot password form
+  document.querySelector(".forgot-password").style.opacity = "0"; // Hide forgot password form
+});
 
-    document.getElementById("showForgotPassword").addEventListener("click", () => {
-      document.querySelector(".login").style.display = "none";
-      document.querySelector(".register").style.display = "none";
-      document.querySelector(".forgot-password").style.display = "block";
-    });
+document.getElementById("showForgotPassword").addEventListener("click", () => {
+  document.querySelector(".login").style.visibility = "hidden"; // Hide login form
+  document.querySelector(".login").style.opacity = "0"; // Hide login form
+  document.querySelector(".register").style.visibility = "hidden"; // Hide register form
+  document.querySelector(".register").style.opacity = "0"; // Hide register form
+  document.querySelector(".forgot-password").style.visibility = "visible"; // Show forgot password form
+  document.querySelector(".forgot-password").style.opacity = "1"; // Show forgot password form
+});
 
-    document.getElementById("backToLogin").addEventListener("click", () => {
-      document.querySelector(".forgot-password").style.display = "none";
-      document.querySelector(".login").style.display = "block";
-    });
-
-
+document.getElementById("backToLogin").addEventListener("click", () => {
+  document.querySelector(".forgot-password").style.visibility = "hidden"; // Hide forgot password form
+  document.querySelector(".forgot-password").style.opacity = "0"; // Hide forgot password form
+  document.querySelector(".login").style.visibility = "visible"; // Show login form
+  document.querySelector(".login").style.opacity = "1"; // Show login form
+});
+    // Login Form Submission
     document.getElementById("loginForm").addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -156,7 +161,7 @@
       .catch(error => console.error("Fetch Error:", error));
     });
 
-
+    // Register Form Submission
     document.getElementById("registerForm").addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -185,7 +190,7 @@
       .catch(error => console.error("Fetch Error:", error));
     });
 
- 
+    // Forgot Password Form Submission
     document.getElementById("forgotPasswordForm").addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -199,6 +204,7 @@
       .then(response => response.text())
       .then(data => {
         alert(data); 
+      })
       .catch(error => {
         console.error("Error:", error);
         alert("Something went wrong.");

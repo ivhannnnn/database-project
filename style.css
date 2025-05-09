@@ -41,7 +41,7 @@ body::before {
     width: 420px;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.6s;
+    transition: transform 1.5s ease;
 }
 
 .wrapper.active {
@@ -60,6 +60,15 @@ body::before {
     position: absolute;
     backface-visibility: hidden;
     top: -220px;
+    transition: visibility 0s, opacity 0.5s ease-in-out; /* Smooth transition for visibility and opacity */
+  
+    .wrapper {
+        width: 420px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 1.5s ease; /* Increased duration for slower flip */
+    }
+    
 }
 
 .form-box h1 {

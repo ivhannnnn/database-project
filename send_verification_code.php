@@ -16,14 +16,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 
     if (!password_verify($old_password, $hashed_password)) {
-        die("Old password is incorrect.");
+        // Show an alert and then go back to the previous page
+        echo "<script>
+                alert('Old password is incorrect.');
+                window.history.back();
+              </script>";
+        exit;
     }
 
     $code = rand(100000, 999999);
     $_SESSION['verification_code'] = $code;
     $_SESSION['new_password'] = password_hash($new_password, PASSWORD_DEFAULT);
 
-  
     $subject = "FoodHub Password Change Verification";
     $message = "Your verification code is: $code";
     $headers = "From: no-reply@foodhub.com";

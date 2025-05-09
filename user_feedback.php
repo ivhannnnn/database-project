@@ -7,15 +7,12 @@ if (!isset($_SESSION['admin'])) {
 
 require 'db_connection.php';
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply'], $_POST['feedback_id'])) {
     $reply = $conn->real_escape_string($_POST['reply']);
     $feedback_id = (int)$_POST['feedback_id'];
-    
   
     $conn->query("UPDATE user_feedback SET reply='$reply' WHERE id=$feedback_id");
 }
-
 
 $query = "SELECT * FROM user_feedback ORDER BY created_at DESC"; 
 $result = $conn->query($query);
@@ -115,6 +112,8 @@ $result = $conn->query($query);
       border: 1px solid var(--glass-border);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
       text-align: center;
+      overflow-y: auto;
+      max-height: 70vh; /* Limit the height to make the pane scrollable */
     }
 
     .feedback-container h2 {
