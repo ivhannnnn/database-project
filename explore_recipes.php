@@ -34,6 +34,7 @@ $result = $conn->query($sql);
             min-height: 100vh; 
         }
 
+   
         .fade-out {
             animation: fadeOut 0.5s forwards;
         }
@@ -41,12 +42,12 @@ $result = $conn->query($sql);
         @keyframes fadeOut {
             to {
                 opacity: 0;
-                transform: scale(0.97);
+                transform: scale(0.70);
             }
         }
 
         .page-container {
-            transition: all 0.5s ease;
+            transition: all 0.2s ease;
         }
 
         body::before {
@@ -116,7 +117,7 @@ $result = $conn->query($sql);
         }
 
         .search-bar input:focus {
-            border-color: #ff6f61;
+            border-color:rgb(42, 177, 102);
         }
 
         .search-bar input::placeholder {
@@ -211,7 +212,7 @@ $result = $conn->query($sql);
         container.classList.add('fade-out');
         setTimeout(() => {
             window.location.href = 'dashboard.php';
-        }, 500); 
+        }, 200); 
     });
 </script>
 

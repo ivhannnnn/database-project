@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
+
 $count_sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE user_id = ? AND dismissed = 0";
 $count_stmt = $conn->prepare($count_sql);
 $count_stmt->bind_param("i", $user_id);
@@ -17,7 +18,6 @@ $count_result = $count_stmt->get_result();
 $count_row = $count_result->fetch_assoc();
 $unread_count = $count_row['unread_count'];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,11 +28,10 @@ $unread_count = $count_row['unread_count'];
   <style>
     :root {
       --white: #ffffff;
-      --glass-bg: rgba(255, 255, 255, 0);
+      --glass-bg: rgba(255, 255, 255, 0.05);
       --glass-border: rgba(255, 255, 255, 0.1);
-      --nav-glass-bg: rgba(0, 0, 0, 0.2);
+      --nav-glass-bg: rgba(0, 0, 0, 0.3);
       --nav-hover-bg: rgba(255, 255, 255, 0.1);
-      --active-bg: rgba(255, 255, 255, 0.25);
     }
 
     * {
@@ -74,36 +73,74 @@ $unread_count = $count_row['unread_count'];
       gap: 16px;
       padding: 10px 20px;
       background: var(--nav-glass-bg);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(5px);
       border-bottom: 1px solid var(--glass-border);
       position: relative;
+      z-index: 10;
     }
 
-    .nav-top a {
+    .nav-top a,
+    .dropdown-btn {
       color: var(--white);
       text-decoration: none;
       padding: 10px 20px;
       border-radius: 12px;
       font-weight: 600;
       background: transparent;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       position: relative;
       z-index: 1;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
 
-    .nav-top a:hover {
+    .nav-top a:not(.no-hover):hover,
+    .dropdown-btn:hover {
       background: var(--nav-hover-bg);
       transform: scale(1.05);
     }
 
-    .nav-top .active-indicator {
-      position: absolute;
-      height: 70%;
+    .notif-badge {
+      background: red;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
       border-radius: 12px;
-      background: var(--active-bg);
-      transition: all 0.4s ease;
-      z-index: 0;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background-color: transparent;
+      border-radius: 10px;
+      min-width: 160px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 5;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+      color: #fff;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .dropdown-content a:hover {
+      background: var(--nav-hover-bg);
+    }
+
+    .dropdown-content.show {
+      display: block;
     }
 
     .main-content {
@@ -120,8 +157,7 @@ $unread_count = $count_row['unread_count'];
       padding: 60px 40px;
       border-radius: 30px;
       background: var(--glass-bg);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
       border: 1px solid var(--glass-border);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
       text-align: center;
@@ -132,16 +168,6 @@ $unread_count = $count_row['unread_count'];
       margin-bottom: 20px;
       color: #ffffff;
       text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
-    }
-
-    .notif-badge {
-      background: red;
-      color: white;
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      margin-left: 8px;
-      font-weight: 600;
     }
 
     .welcome-bubble p {
@@ -155,7 +181,6 @@ $unread_count = $count_row['unread_count'];
       .nav-top {
         flex-direction: column;
         gap: 10px;
-        position: relative;
       }
 
       .welcome-bubble {
@@ -174,10 +199,20 @@ $unread_count = $count_row['unread_count'];
 </head>
 <body>
 
-  <div class="nav-top" id="nav">
-    <div class="active-indicator" id="activeIndicator"></div>
-    <a href="profile.php">Profile</a>
-    <a href="explore_recipes.php">Explore Recipes</a>
+  <div class="nav-top">
+    
+    <div class="dropdown">
+      <button class="dropdown-btn" id="profileDropdownBtn">
+        <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
+      </button>
+      <div class="dropdown-content" id="profileDropdown">
+        <a href="profile.php">View Profile</a>
+        <a href="logout.php">Logout</a>
+      </div>
+    </div>
+
+ 
+    <a href="explore_recipes.php" class="no-hover">Explore Recipes</a>
     <a href="upload_recipe.php">Upload Recipes</a>
     <a href="customer_service_form.php">Customer Service</a>
     <a href="saved_recipes.php">Saved Recipes</a>
@@ -186,7 +221,6 @@ $unread_count = $count_row['unread_count'];
         <span class="notif-badge"><?php echo $unread_count; ?></span>
       <?php endif; ?>
     </a>
-    <a href="logout.php">Logout</a>
   </div>
 
   <div class="main-content">
@@ -201,33 +235,33 @@ $unread_count = $count_row['unread_count'];
   </div>
 
   <script>
-    const links = document.querySelectorAll('.nav-top a');
-    const indicator = document.getElementById('activeIndicator');
+  
+    const dropdownBtn = document.getElementById("profileDropdownBtn");
+    const dropdownContent = document.getElementById("profileDropdown");
 
-    function moveIndicator(element) {
-      const rect = element.getBoundingClientRect();
-      const parentRect = element.parentElement.getBoundingClientRect();
-      indicator.style.width = rect.width + 'px';
-      indicator.style.left = (rect.left - parentRect.left) + 'px';
-    }
+    dropdownBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      dropdownContent.classList.toggle("show");
+    });
 
-    links.forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        moveIndicator(this);
-
-        document.body.classList.add('fade-out');
-
-        const targetUrl = this.getAttribute('href');
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 500);
-      });
+    window.addEventListener("click", function () {
+      dropdownContent.classList.remove("show");
     });
 
  
-    window.addEventListener('load', () => {
-      moveIndicator(links[0]);
+    document.querySelectorAll(".nav-top a").forEach(link => {
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+        const href = this.getAttribute("href");
+        document.body.classList.add("fade-out");
+        setTimeout(() => {
+          window.location.href = href;
+        }, 250);
+      });
+    });
+
+    window.addEventListener("pageshow", function (event) {
+      document.body.classList.remove("fade-out");
     });
   </script>
 

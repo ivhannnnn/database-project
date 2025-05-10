@@ -171,7 +171,7 @@ if (!isset($_SESSION['admin'])) {
        
         setTimeout(function() {
           window.location.href = targetUrl;
-        }, 500);
+        }, 200);
       });
     });
   </script>

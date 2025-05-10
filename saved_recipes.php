@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
 
       setTimeout(function() {
         window.location.href = 'dashboard.php';
-      }, 500); 
+      }, 200); 
     });
   </script>
 

@@ -42,16 +42,16 @@ if (!isset($_SESSION['user_id'])) {
         left: 0;
         width: 100%;
         height: 150%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(3, 3, 3, 0.5);
         z-index: -1;
     }
 
     #pageContainer {
         display: flex;
         flex-direction: column;
-        min-height: 100%; /* Allow content to flow */
+        min-height: 100%; 
         opacity: 0;
-        transition: opacity 0.6s ease-in-out;
+        transition: opacity 0.3s ease-in-out;
     }
 
     #pageContainer.fade-in {
@@ -104,16 +104,16 @@ if (!isset($_SESSION['user_id'])) {
         padding: 40px 30px;
         border-radius: 20px;
         background: var(--glass-bg);
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(2px);
         border: 1px solid var(--glass-border);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 40px rgba(163, 154, 154, 0.3);
     }
 
     .content h2 {
         font-size: 34px;
         margin-bottom: 20px;
         text-align: center;
-        text-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+        text-shadow: 0 3px 8px rgba(12, 12, 12, 0.7);
     }
 
     .form-container {
@@ -137,13 +137,17 @@ if (!isset($_SESSION['user_id'])) {
         width: 100%;
         padding: 12px;
         margin-top: 15px;
-        border: none;
-        border-radius: 8px;
         font-size: 16px;
+         background-color: #fff;
+            border: 1px solid rgb(230, 230, 230);
+            border-radius: 10px;
     }
+
+
 
     textarea {
         resize: vertical;
+        
     }
 
     button {
@@ -211,7 +215,7 @@ if (!isset($_SESSION['user_id'])) {
         pageContainer.classList.add('fade-out');
         setTimeout(() => {
             window.location.href = this.getAttribute('href');
-        }, 500);
+        }, 200);
     });
 </script>
 </body>

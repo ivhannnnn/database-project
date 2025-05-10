@@ -226,7 +226,7 @@ $unread_count = $count_row['unread_count'];
         formContainer.style.transform = 'scale(0.95)';
         setTimeout(() => {
             window.location.href = 'dashboard.php';
-        }, 500); 
+        }, 200); 
     });
 </script>
 

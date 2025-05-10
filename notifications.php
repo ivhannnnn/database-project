@@ -310,7 +310,7 @@ $has_notifications = ($result && $result->num_rows > 0);
 
         setTimeout(function() {
             window.location.href = 'dashboard.php';
-        }, 500); 
+        }, 200); 
     });
 </script>
 

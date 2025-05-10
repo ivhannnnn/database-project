@@ -54,8 +54,13 @@ if (isset($_GET['error'])) {
             min-height: 100vh;
             margin: 0;
             box-sizing: border-box;
+            transition: opacity 0.5s ease;
         }
-        
+
+        body.fade-out {
+            opacity: 0;
+        }
+
         body::before {
             content: "";
             position: absolute;
@@ -85,7 +90,7 @@ if (isset($_GET['error'])) {
             border-radius: 50%;
             overflow: hidden;
             margin: 0 auto 25px;
-            border: 4px solid #f9c74f;
+            border: 2px solid #f9c74f;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
@@ -121,18 +126,18 @@ if (isset($_GET['error'])) {
         .upload-form button {
             background-color: transparent;
             color: white;
-            border: none;
+            border: 1px solid #fff;
             padding: 12px 24px;
             font-weight: 600;
             border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             font-size: 1em;
         }
 
         .upload-form button:hover {
-            background: var(--active-bg);
-            box-shadow: 0 0 8px rgba(255,255,255,0.3);
+            background: #f9c74f;
+            color: black;
             transform: scale(1.05);
         }
 
@@ -153,6 +158,7 @@ if (isset($_GET['error'])) {
         .profile-info p {
             margin-bottom: 10px;
         }
+        
 
         .back-btn,
         .see-recipes-btn {
@@ -161,17 +167,18 @@ if (isset($_GET['error'])) {
             color: white;
             background-color: transparent;
             text-decoration: none;
+            border: 1px solid #fff;
             border-radius: 12px;
             font-weight: 600;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             font-size: 1em;
-            margin-top: 15px;
+            margin: 10px 5px 0;
         }
 
         .back-btn:hover,
         .see-recipes-btn:hover {
-            background: var(--active-bg);
-            box-shadow: 0 0 8px rgba(255,255,255,0.3);
+            background: #f9c74f;
+            color: black;
             transform: scale(1.05);
         }
 
@@ -179,16 +186,6 @@ if (isset($_GET['error'])) {
             color: red;
             margin-bottom: 20px;
             font-size: 1.1em;
-        }
-
-      
-        .fade-out {
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-
-        .fade-out.fade {
-            opacity: 0;
         }
     </style>
 </head>
@@ -225,7 +222,6 @@ if (isset($_GET['error'])) {
 
     <div class="profile-info">
         <h3 style="color: #f9c74f; text-align: center; margin-bottom: 10px;">Change Password</h3>
-
         <form action="send_verification_code.php" method="POST" class="upload-form">
             <label for="old_password">Old Password</label>
             <input type="password" id="old_password" name="old_password" required>
@@ -233,24 +229,21 @@ if (isset($_GET['error'])) {
             <label for="new_password">New Password</label>
             <input type="password" id="new_password" name="new_password" required>
 
-            <button type="submit">Send gmail Verification Code</button>
+            <button type="submit">Send Gmail Verification Code</button>
         </form>
     </div>
 
     <a href="posted_recipes.php" class="see-recipes-btn">See All Posted Recipes</a>
-    <a href="dashboard.php" class="back-btn fade-out" id="backBtn">Back to Dashboard</a>
+    <a href="dashboard.php" class="back-btn" id="backBtn">Back to Dashboard</a>
 </div>
 
 <script>
-    
     document.getElementById('backBtn').addEventListener('click', function(event) {
         event.preventDefault();
-        this.classList.add('fade');
-
-     
+        document.body.classList.add('fade-out');
         setTimeout(function() {
             window.location.href = 'dashboard.php';
-        }, 500); 
+        }, 300);
     });
 </script>
 

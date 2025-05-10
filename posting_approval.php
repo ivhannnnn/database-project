@@ -215,7 +215,7 @@ $result = $conn->query($sql);
      
         setTimeout(function() {
             window.location.href = 'admin_dashboard.php';
-        }, 500); 
+        }, 200); 
     });
 </script>
 
