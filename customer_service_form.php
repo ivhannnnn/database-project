@@ -31,6 +31,7 @@ $unread_count = $count_row['unread_count'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Customer Service Form - FoodHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --white: #ffffff;
@@ -61,14 +62,15 @@ $unread_count = $count_row['unread_count'];
         }
         .navbar {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            align-items: center;
             padding: 10px 20px;
-            background: var(--nav-glass-bg);
-            backdrop-filter: blur(3px);
-            border-bottom: 1px solid var(--glass-border);
-            position: fixed;
-            top: 0;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             width: 100%;
+            position: absolute;
+            top: 0;
             z-index: 10;
         }
         .navbar a {
@@ -78,11 +80,16 @@ $unread_count = $count_row['unread_count'];
             border-radius: 12px;
             font-weight: 600;
             background: transparent;
+            display: flex;
+            align-items: center;
             transition: all 0.3s ease;
         }
         .navbar a:hover {
             background: var(--nav-hover-bg);
             transform: scale(1.05);
+        }
+        .navbar i {
+            margin-right: 8px;
         }
         .notif-badge {
             background-color: red;
@@ -153,7 +160,6 @@ $unread_count = $count_row['unread_count'];
             transform: scale(1.05);
         }
 
-     
         .alert {
             background-color: #4CAF50;
             color: white;
@@ -186,9 +192,13 @@ $unread_count = $count_row['unread_count'];
 </head>
 <body>
 
-
 <div class="navbar">
-    <a href="dashboard.php" id="dashboardLink">Dashboard</a>
+    <a href="dashboard.php" id="dashboardLink">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+        <?php if ($unread_count > 0): ?>
+            <span class="notif-badge"><?= $unread_count ?></span>
+        <?php endif; ?>
+    </a>
 </div>
 
 <div class="main-content">
@@ -218,7 +228,6 @@ $unread_count = $count_row['unread_count'];
 </div>
 
 <script>
- 
     document.getElementById('dashboardLink').addEventListener('click', function(e) {
         e.preventDefault();
         const formContainer = document.getElementById('formContainer');

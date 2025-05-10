@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 require 'db_connection.php';
 
@@ -65,6 +65,7 @@ $has_notifications = ($result && $result->num_rows > 0);
     <meta charset="UTF-8">
     <title>Your Recipe Notifications</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --white: #ffffff;
@@ -88,6 +89,11 @@ $has_notifications = ($result && $result->num_rows > 0);
             display: flex;
             flex-direction: column;
             color: #fff;
+            transition: opacity 0.5s ease;
+        }
+
+        body.fade-out {
+            opacity: 0;
         }
 
         body::before {
@@ -103,12 +109,16 @@ $has_notifications = ($result && $result->num_rows > 0);
 
         .nav-top {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            align-items: center;
             padding: 10px 20px;
-            background: var(--nav-glass-bg);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
-            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            width: 100%;
+            position: absolute;
+            top: 0;
+            z-index: 10;
         }
 
         .nav-top a {
@@ -118,6 +128,8 @@ $has_notifications = ($result && $result->num_rows > 0);
             border-radius: 12px;
             font-weight: 600;
             background: transparent;
+            display: flex;
+            align-items: center;
             transition: all 0.3s ease;
         }
 
@@ -126,9 +138,13 @@ $has_notifications = ($result && $result->num_rows > 0);
             transform: scale(1.05);
         }
 
-        .nav-top a.active {
-            background: var(--active-bg);
-            box-shadow: 0 0 8px rgba(255,255,255,0.3);
+        .nav-top i {
+            margin-right: 8px; 
+            font-size: 18px; 
+        }
+
+        .nav-top a:hover i {
+            color: #28a745; 
         }
 
         .main-content {
@@ -265,7 +281,9 @@ $has_notifications = ($result && $result->num_rows > 0);
 <body>
 
 <div class="nav-top">
-    <a href="dashboard.php" id="dashboardLink" class="active">Dashboard</a>
+    <a href="dashboard.php" id="dashboardLink" class="active">
+        <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
 </div>
 
 <div class="main-content">
@@ -295,22 +313,28 @@ $has_notifications = ($result && $result->num_rows > 0);
                     </div>
                 </div>
             <?php endwhile; ?>
-            <a href="notifications.php?delete_all=true" class="delete-all-btn" onclick="return confirm('Are you sure you want to delete all notifications?')">Delete All Notifications</a>
         <?php else: ?>
-            <p>No new notifications.</p>
+            <p>No notifications yet!</p>
         <?php endif; ?>
 
+        <a href="notifications.php?delete_all=true" class="delete-all-btn" onclick="return confirm('Are you sure you want to delete all notifications?')">Delete All Notifications</a>
     </div>
 </div>
 
 <script>
-    document.getElementById('dashboardLink').addEventListener('click', function(event) {
-        event.preventDefault();
-        document.getElementById('mainContent').style.opacity = 0;
+    document.addEventListener('DOMContentLoaded', function() {
+        const body = document.querySelector('body');
+        const links = document.querySelectorAll('.nav-top a');
 
-        setTimeout(function() {
-            window.location.href = 'dashboard.php';
-        }, 200); 
+        links.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); 
+                body.classList.add('fade-out'); 
+                setTimeout(() => {
+                    window.location.href = link.href; 
+                }, 300); 
+            });
+        });
     });
 </script>
 

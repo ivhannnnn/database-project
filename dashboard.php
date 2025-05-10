@@ -9,28 +9,37 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-
 $count_sql = "SELECT COUNT(*) AS unread_count FROM notifications WHERE user_id = ? AND dismissed = 0";
 $count_stmt = $conn->prepare($count_sql);
 $count_stmt->bind_param("i", $user_id);
 $count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$unread_count = $count_result->fetch_assoc()['unread_count'];
+$unread_count = $count_stmt->get_result()->fetch_assoc()['unread_count'] ?? 0;
+
+$user_sql = "SELECT username, profile_picture FROM users WHERE id = ?";
+$user_stmt = $conn->prepare($user_sql);
+$user_stmt->bind_param("i", $user_id);
+$user_stmt->execute();
+$user = $user_stmt->get_result()->fetch_assoc();
+
+$profile_picture = (!empty($user['profile_picture']) && file_exists("uploads/" . $user['profile_picture']))
+    ? "uploads/" . $user['profile_picture']
+    : "uploads/default.png";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>FoodHub Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
     :root {
       --white: #fff;
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --nav-bg: rgba(0, 0, 0, 0.3);
-      --nav-hover: rgba(255, 255, 255, 0.1);
+      --highlight: #f9c74f;
+      --nav-bg: rgba(0, 0, 0, 0.4);
+      --hover-bg: rgba(255, 255, 255, 0.1);
     }
 
     * {
@@ -43,9 +52,7 @@ $unread_count = $count_result->fetch_assoc()['unread_count'];
       font-family: 'Poppins', sans-serif;
       background: url('bgp.jpg') no-repeat center center / cover;
       color: var(--white);
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+      min-height: 100vh;
       transition: opacity 0.5s ease-in-out;
       position: relative;
     }
@@ -66,41 +73,37 @@ $unread_count = $count_result->fetch_assoc()['unread_count'];
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 14px;
-      padding: 12px 24px;
+      gap: 12px;
+      padding: 12px 20px;
       background: var(--nav-bg);
       backdrop-filter: blur(5px);
-      border-bottom: 1px solid var(--glass-border);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .nav-top a,
     .dropdown-btn {
       color: var(--white);
-      text-decoration: none;
       font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 12px;
-      transition: all 0.2s ease;
+      padding: 10px 16px;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: 0.3s;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       background: transparent;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
     }
 
     .nav-top a:hover,
     .dropdown-btn:hover {
-      background: var(--nav-hover);
+      background: var(--hover-bg);
       transform: scale(1.05);
     }
 
-    .notif-badge {
-      background: red;
-      color: #fff;
-      padding: 2px 7px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-left: 6px;
+    .nav-top .active {
+      border-bottom: 2px solid var(--highlight);
+      color: var(--highlight);
     }
 
     .dropdown {
@@ -113,72 +116,87 @@ $unread_count = $count_result->fetch_assoc()['unread_count'];
       top: 110%;
       right: 0;
       min-width: 160px;
-      background: transparent;
+      background: var(--nav-bg);
       border-radius: 10px;
       overflow: hidden;
-      z-index: 10;
+      z-index: 20;
     }
 
     .dropdown-content a {
-      display: block;
       padding: 12px 16px;
+      display: block;
       color: #fff;
       text-decoration: none;
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     .dropdown-content a:hover {
-      background: var(--nav-hover);
+      background: var(--hover-bg);
     }
 
     .dropdown-content.show {
       display: block;
     }
 
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+    }
+
+    .notif-badge {
+      background: red;
+      color: #fff;
+      padding: 3px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
     .main-content {
-      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 60px 20px;
     }
 
     .welcome-bubble {
-      background: var(--glass-bg);
-      backdrop-filter: blur(6px);
-      border: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 50px;
       border-radius: 25px;
-      padding: 60px 40px;
       max-width: 900px;
       width: 90%;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
       text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     .welcome-bubble h2 {
-      font-size: 32px;
+      font-size: 30px;
       margin-bottom: 20px;
-      color: #fff;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
 
     .welcome-bubble p {
       font-size: 18px;
-      color: #f2f2f2;
-      line-height: 1.6;
+      color: #eee;
+      line-height: 1.5;
     }
 
     @media (max-width: 600px) {
       .nav-top {
         flex-direction: column;
+        align-items: center;
       }
 
       .welcome-bubble {
-        padding: 40px 20px;
+        padding: 30px 20px;
       }
 
       .welcome-bubble h2 {
-        font-size: 24px;
+        font-size: 22px;
       }
 
       .welcome-bubble p {
@@ -192,20 +210,20 @@ $unread_count = $count_result->fetch_assoc()['unread_count'];
   <div class="nav-top">
     <div class="dropdown">
       <button class="dropdown-btn" id="profileDropdownBtn">
-        <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
+        <img src="<?php echo htmlspecialchars($profile_picture); ?>" class="avatar" alt="Avatar" />
+        <?php echo htmlspecialchars($user['username']); ?> ▼
       </button>
       <div class="dropdown-content" id="profileDropdown">
-        <a href="profile.php">View Profile</a>
-        <a href="logout.php">Logout</a>
+        <a href="profile.php"><i class="fas fa-id-badge"></i> View Profile</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </div>
     </div>
 
-    <a href="explore_recipes.php">Explore Recipes</a>
-    <a href="upload_recipe.php">Upload Recipes</a>
-    <a href="customer_service_form.php">Customer Service</a>
-    <a href="saved_recipes.php">Saved Recipes</a>
-    <a href="notifications.php">
-      Notifications
+    <a href="explore_recipes.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'explore_recipes.php' ? 'active' : ''; ?>"><i class="fas fa-utensils"></i> Explore Recipes</a>
+    <a href="upload_recipe.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'upload_recipe.php' ? 'active' : ''; ?>"><i class="fas fa-upload"></i> Upload Recipes</a>
+    <a href="customer_service_form.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'customer_service_form.php' ? 'active' : ''; ?>"><i class="fas fa-headset"></i> Customer Service</a>
+    <a href="saved_recipes.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'saved_recipes.php' ? 'active' : ''; ?>"><i class="fas fa-bookmark"></i> Saved Recipes</a>
+    <a href="notifications.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'notifications.php' ? 'active' : ''; ?>"><i class="fas fa-bell"></i> Notifications
       <?php if ($unread_count > 0): ?>
         <span class="notif-badge"><?php echo $unread_count; ?></span>
       <?php endif; ?>
@@ -214,28 +232,28 @@ $unread_count = $count_result->fetch_assoc()['unread_count'];
 
   <div class="main-content">
     <div class="welcome-bubble">
-      <h2>Hi, Welcome <?php echo htmlspecialchars($_SESSION['username']); ?> 👋</h2>
+      <h2>Hi, Welcome <?php echo htmlspecialchars($user['username']); ?> 👋</h2>
       <p>
         Welcome to <strong>FoodHub</strong> — your recipe paradise.<br>
-        Browse a variety of mouthwatering recipes,<br>
-        share your culinary creations, and get inspired by fellow food lovers!
+        Browse a variety of mouthwatering recipes, share your culinary creations,<br>
+        and get inspired by fellow food lovers!
       </p>
     </div>
   </div>
 
   <script>
-    const dropdownBtn = document.getElementById("profileDropdownBtn");
-    const dropdownContent = document.getElementById("profileDropdown");
-
-    dropdownBtn.addEventListener("click", function (e) {
+ 
+    document.getElementById("profileDropdownBtn").addEventListener("click", function (e) {
       e.stopPropagation();
-      dropdownContent.classList.toggle("show");
+      document.getElementById("profileDropdown").classList.toggle("show");
     });
 
+    
     window.addEventListener("click", function () {
-      dropdownContent.classList.remove("show");
+      document.getElementById("profileDropdown").classList.remove("show");
     });
 
+   
     document.querySelectorAll(".nav-top a").forEach(link => {
       link.addEventListener("click", function(e) {
         e.preventDefault();
@@ -247,10 +265,9 @@ $unread_count = $count_result->fetch_assoc()['unread_count'];
       });
     });
 
-    window.addEventListener("pageshow", function () {
+    window.addEventListener("pageshow", () => {
       document.body.classList.remove("fade-out");
     });
   </script>
-
 </body>
 </html>

@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id'])) {
   <meta charset="UTF-8">
   <title>Upload Recipe - FoodHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root {
         --white: #ffffff;
@@ -31,8 +32,8 @@ if (!isset($_SESSION['user_id'])) {
         background: url('bgp.jpg') no-repeat center center / cover;
         background-attachment: fixed;
         color: white;
-        overflow-y: auto; 
-        min-height: 100vh; 
+        overflow-y: auto;
+        min-height: 100vh;
     }
 
     body::before {
@@ -49,7 +50,7 @@ if (!isset($_SESSION['user_id'])) {
     #pageContainer {
         display: flex;
         flex-direction: column;
-        min-height: 100%; 
+        min-height: 100%;
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
     }
@@ -65,29 +66,37 @@ if (!isset($_SESSION['user_id'])) {
 
     .navbar {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: center;
         padding: 10px 20px;
-        background: var(--nav-glass-bg);
-        backdrop-filter: blur(3px);
-        border-bottom: 1px solid var(--glass-border);
-        position: fixed;
-        top: 0;
+        background: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
         width: 100%;
+        position: absolute;
+        top: 0;
         z-index: 10;
     }
 
     .navbar a {
         color: var(--white);
         text-decoration: none;
-        padding: 10px 20px;
-        border-radius: 12px;
+        padding: 12px 20px;
+        border-radius: 25px;
         font-weight: 600;
+        background: transparent;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
     }
 
     .navbar a:hover {
         background: var(--nav-hover-bg);
         transform: scale(1.05);
+    }
+
+    .navbar i {
+        margin-right: 8px;
     }
 
     .main-content {
@@ -138,16 +147,13 @@ if (!isset($_SESSION['user_id'])) {
         padding: 12px;
         margin-top: 15px;
         font-size: 16px;
-         background-color: #fff;
-            border: 1px solid rgb(230, 230, 230);
-            border-radius: 10px;
+        background-color: #fff;
+        border: 1px solid rgb(230, 230, 230);
+        border-radius: 10px;
     }
-
-
 
     textarea {
         resize: vertical;
-        
     }
 
     button {
@@ -169,7 +175,7 @@ if (!isset($_SESSION['user_id'])) {
 <body>
 <div id="pageContainer">
     <div class="navbar">
-        <a href="dashboard.php" id="dashboardLink">Dashboard</a>
+        <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
     </div>
 
     <div class="main-content">
@@ -201,13 +207,11 @@ if (!isset($_SESSION['user_id'])) {
 
 <script>
     const pageContainer = document.getElementById('pageContainer');
-    const dashboardLink = document.getElementById('dashboardLink');
+    const dashboardLink = document.querySelector('.navbar a');
 
-   
     window.addEventListener('load', () => {
         pageContainer.classList.add('fade-in');
     });
-
 
     dashboardLink.addEventListener('click', function (e) {
         e.preventDefault();

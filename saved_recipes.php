@@ -33,22 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
   <meta charset="UTF-8">
   <title>Saved Recipes - FoodHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    :root {
-      --white: #ffffff;
-      --glass-bg: rgba(255, 255, 255, 0.1);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --nav-glass-bg: rgba(0, 0, 0, 0.2);
-      --nav-hover-bg: rgba(255, 255, 255, 0.1);
-      --active-bg: rgba(255, 255, 255, 0.25);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Poppins', sans-serif;
       background: url('bgp.jpg') no-repeat center center / cover;
@@ -56,8 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       display: flex;
       flex-direction: column;
       color: white;
-      transition: all 0.3s ease;
+      transition: opacity 0.5s ease;
     }
+
+    body.fade-out {
+      opacity: 0;
+    }
+
     body::before {
       content: "";
       position: absolute;
@@ -65,20 +56,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5); 
+      background: rgba(0, 0, 0, 0.5);
       z-index: -1;
     }
+
     .navbar {
       display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 16px;
+      justify-content: flex-start;
+      align-items: center;
       padding: 10px 20px;
-      background: var(--nav-glass-bg);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      border-bottom: 1px solid var(--glass-border);
-      opacity: 0.8;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      width: 100%;
+      position: absolute;
+      top: 0;
+      z-index: 10;
     }
 
     .navbar a {
@@ -88,17 +81,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       border-radius: 12px;
       font-weight: 600;
       background: transparent;
+      display: flex;
+      align-items: center;
       transition: all 0.3s ease;
     }
 
     .navbar a:hover {
-      background: var(--nav-hover-bg);
+      background: rgba(255, 255, 255, 0.2);
       transform: scale(1.05);
     }
 
-    .navbar a.active {
-      background: var(--active-bg);
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    .navbar i {
+      margin-right: 8px;
+      font-size: 18px;
     }
 
     .main-content {
@@ -107,8 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       justify-content: center;
       align-items: center;
       padding: 40px 20px;
-      opacity: 1;
-      transition: opacity 0.5s ease;
     }
 
     .content {
@@ -116,13 +109,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
       width: 90%;
       padding: 40px 30px;
       border-radius: 20px;
-      background: var(--glass-bg);
+      background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-      opacity: 1;
-      transition: opacity 0.5s ease;
     }
 
     .content h1 {
@@ -207,10 +198,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
 <body>
 
   <div class="navbar">
-    <a href="dashboard.php" class="active" id="dashboardLink">Dashboard</a>
+    <a href="dashboard.php" id="dashboard-link"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
   </div>
 
-  <div class="main-content" id="mainContent">
+  <div class="main-content">
     <div class="content">
       <h1>Your Saved Recipes</h1>
       <div class="recipe-grid">
@@ -239,13 +230,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unsave_recipe'])) {
   </div>
 
   <script>
-    document.getElementById('dashboardLink').addEventListener('click', function(event) {
-      event.preventDefault();
-      document.getElementById('mainContent').style.opacity = 0;
+    document.addEventListener('DOMContentLoaded', function() {
+        const dashboardLink = document.getElementById('dashboard-link');
 
-      setTimeout(function() {
-        window.location.href = 'dashboard.php';
-      }, 200); 
+        dashboardLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            document.body.classList.add('fade-out');  
+            setTimeout(function() {
+                window.location.href = dashboardLink.href; 
+            }, 300); 
+        });
     });
   </script>
 

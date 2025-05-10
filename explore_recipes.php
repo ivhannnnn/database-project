@@ -22,6 +22,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <title>Explore Recipes - FoodHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -30,11 +31,10 @@ $result = $conn->query($sql);
             margin: 0;
             padding: 0;
             color: #fff;
-            overflow-y: auto; 
-            min-height: 100vh; 
+            overflow-y: auto;
+            min-height: 100vh;
         }
 
-   
         .fade-out {
             animation: fadeOut 0.5s forwards;
         }
@@ -58,12 +58,13 @@ $result = $conn->query($sql);
             width: 100%;
             height: 130%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: -1; 
+            z-index: -1;
         }
 
         .navbar {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            align-items: center;
             padding: 10px 20px;
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(5px);
@@ -82,6 +83,8 @@ $result = $conn->query($sql);
             font-weight: 600;
             background: transparent;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
         }
 
         .navbar a:hover {
@@ -89,12 +92,16 @@ $result = $conn->query($sql);
             transform: scale(1.05);
         }
 
+        .navbar i {
+            margin-right: 8px;
+        }
+
         h1 {
             text-align: center;
             font-size: 36px;
-            margin-top: 80px;
+            margin-top: 100px;
             margin-bottom: 40px;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
         }
 
         .search-bar {
@@ -112,16 +119,16 @@ $result = $conn->query($sql);
             border: 2px solid #fff;
             outline: none;
             background: rgba(255, 255, 255, 0.1);
-            color: #fff; 
+            color: #fff;
             transition: 0.3s ease;
         }
 
         .search-bar input:focus {
-            border-color:rgb(42, 177, 102);
+            border-color: rgb(42, 177, 102);
         }
 
         .search-bar input::placeholder {
-            color: #fff; 
+            color: #fff;
         }
 
         .recipe-container {
@@ -179,7 +186,7 @@ $result = $conn->query($sql);
 
 <div class="page-container" id="pageContainer">
     <div class="navbar">
-        <a href="#" id="dashboardLink">Dashboard</a>
+        <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
     </div>
 
     <h1>Explore Recipes 🍴</h1>
@@ -206,13 +213,13 @@ $result = $conn->query($sql);
 </div>
 
 <script>
-    document.getElementById('dashboardLink').addEventListener('click', function(e) {
+    document.querySelector('.navbar a').addEventListener('click', function(e) {
         e.preventDefault();
         const container = document.getElementById('pageContainer');
         container.classList.add('fade-out');
         setTimeout(() => {
             window.location.href = 'dashboard.php';
-        }, 200); 
+        }, 200);
     });
 </script>
 
