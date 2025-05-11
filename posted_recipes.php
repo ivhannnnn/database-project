@@ -50,7 +50,13 @@ $result = $stmt->get_result();
             backdrop-filter: blur(10px);
             text-align: center;
         }
-
+      .view-recipe {
+        color: #fff;
+      }
+.view-recipe:hover {
+         transform: scale(2.05);
+            background: rgba(255, 255, 255, 0.15);
+      }
         h2 {
             font-size: 2em;
             margin-bottom: 30px;
